@@ -159,12 +159,17 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 - 「Client Exclusion」 の項目についてはEnabledのチェックを外す
 - 「P2P Blocking Action」をDropにする
   - これが無いと、同一APのSSIDに接続しているクライアント間の通信が遮断できない
+  - 但しマネジメントセグメントでは無効にしておく
 - 「FlexConnect Local Switching」の項目にチェックを入れ、enabledとする。
 
 ![](images/image16.png)
 
+- 「Client Load Balancing」は、複数AP間でクライアントを融通しあい極端にどこかのAPにクライアント数が偏らないようにしてくれる設定なので、基本的には入れておく。
+  - 手動でクライアント数のバランシングを行うオペレーションが不要になる
+  - 但し後述するように稀に接続断の頻発という事象を引き起こす場合がある
 - 「Clinent Band Select」の項目は2.4GHz/5GHz両方からSSIDを提供するときに、5GHz(802.11a)に優先して接続する設定なので、SSIDの設定状況に応じて選択する。
-
+  - 2.4GHzと5GHzとでSSIDを分けた場合は不要、それ以外の場合は基本的に有効にしておくこと
+  
 ![](images/image08.png)
 
 ## <a name="ipv6"> IPv6のサポート/非サポート: RA Guardの設定 </a>
