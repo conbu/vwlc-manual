@@ -284,3 +284,10 @@ WLCにおけるこれまでの設定順序を逸脱した場合やWLANsにてSSI
 ![](images/image17.png)
 
 本来は事前に設定したInterfaceとSSIDの設定にしたがってマッピングが作成されるが、SSIDの削除／再追加などを行うとこれが崩れる場合がある。この様な場合にこの手順を踏む。
+
+
+### <a name="client_load_balancing"> 無線LANクライアントの接続が頻繁に切れる場合 </a>
+
+Client Load Balancing 機能が悪い方向に働いている可能性があります。
+WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing」のチェックボックスを外すと改善する場合があります。
+ただし設定変更時には一度すべてのクライアントの接続が切れるので注意。
