@@ -190,11 +190,34 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ![](images/image11.png)
 
+## <a name="ap_cert_clear"> APの証明書クリア手順 </a>
+
+APへ以下の設定を行います。 AP内に登録されている旧証明書をクリアして新証明書をAPに導入させる必要があります。DHCPの場合はこの手順だけでもOK。
+
+enableモードで以下を実行します。
+
+```
+clear ap ip address
+clear ap ip default-gateway
+clear capwap private-config
+```
+
+その後、以下の様にreloadコマンドで再起動させます
+
+```
+reload
+```
+
+再起動後、show capwap ip config を実行すると、WLCの接続先設定が初期化されているのがわかる。
+ここに改めていかの様にvWLCのアドレスを設定します。
+
+```
+capwap ap controller ip address 10.255.255.51
+```
 
 ## <a name="ap_join"> APのJOIN </a>
 
-APへ以下の設定を行います。APに静的アドレスを割り当てている場合は、コンソールに入り enable 後 以下のような設定を行います。
-DHCPの場合は、次の「AP証明書クリア手順」だけでもOKです。
+APに静的アドレスを割り当てている場合は、コンソールに入り enable 後 以下のような設定を行います。
 
 ```
 capwap ap ip address 10.255.1.101 255.255.252.0
@@ -213,29 +236,6 @@ capwap ap controller ip address 10.255.255.51
 このAPから controller への疎通があれば JOIN しようとするはずです。
 AP名はWLC上から変更します。
 
-## <a name="ap_cert_clear"> APの証明書クリア手順 </a>
-
-WLCを再インストールした際にAP内に登録されている旧証明書をクリアして新証明書をAPに導入させる必要がある。
-DHCPの場合はこの手順だけでもOK。
-
-enableモードで以下を実行します。
-
-```
-clear capwap private-config
-```
-
-その後、以下の様にreloadコマンドで再起動させます
-
-```
-reload
-```
-
-再起動後、show capwap ip config を実行すると、WLCの接続先設定が初期化されているのがわかる。
-ここに改めていかの様にvWLCのアドレスを設定します。
-
-```
-capwap ap controller ip address 10.255.255.51
-```
 
 ## <a name="wlc_ap_conf"> APのWLC上の設定 </a>
 
