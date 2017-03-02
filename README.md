@@ -17,8 +17,8 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 - [APの証明書クリア手順](#ap_cert_clear)
 - [APのWLC上の設定](#wlc_ap_conf)
 - [トラブルシュート虎の巻](#ts_crib)
-  - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
-  - [VLANが混ざる その](#flexconnect_vlan_mix_2)
+  - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
+  - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
