@@ -17,7 +17,8 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 - [APの証明書クリア手順](#ap_cert_clear)
 - [APのWLC上の設定](#wlc_ap_conf)
 - [トラブルシュート虎の巻](#ts_crib)
-  - [VLANが混ざる](#flexconnect_vlan_mix)
+  - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
+  - [VLANが混ざる その](#flexconnect_vlan_mix_2)
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
@@ -272,7 +273,7 @@ Applyを推して適用後、以下を実行する
   - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
 
 ## <a name="ts_crib"> トラブルシュート虎の巻 </a>
-### <a name="flexconnect_vlan_mix"> FlexConnect利用時にセグメント(VLAN)が混ざったような挙動を示す場合の対処 </a>
+### <a name="flexconnect_vlan_mix_1"> FlexConnect利用時にセグメント(VLAN)が混ざったような挙動を示す場合の対処 その1</a>
 
 WLCにおけるこれまでの設定順序を逸脱した場合やWLANsにてSSIDの増減をAP登録後に行った場合に、USER用SSIDに接続しているにも関わらずMGMTセグメントのアドレスが降ってくるor疎通ができてしまうなど、VLAN-SSIDのマッピングが崩れたような事象が発生することがある。このような場合、FlexConnect Groupsを設定して修正できる。
 
@@ -293,6 +294,10 @@ WLCにおけるこれまでの設定順序を逸脱した場合やWLANsにてSSI
 
 本来は事前に設定したInterfaceとSSIDの設定にしたがってマッピングが作成されるが、SSIDの削除／再追加などを行うとこれが崩れる場合がある。この様な場合にこの手順を踏む。
 
+### <a name="flexconnect_vlan_mix_2"> セグメント(VLAN)が混ざったような挙動を示す場合の対処 その２ </a>
+
+APごとの__VLAN Support__が正しく設定されていないと、全てのトラフィックが上流にタグ無しで出て行く場合がある。
+"その1"で述べた内容が大丈夫でも事象が継続する場合、接続中のAPの当該項目を確認すること。
 
 ### <a name="client_load_balancing"> 無線LANクライアントの接続が頻繁に切れる場合 </a>
 
