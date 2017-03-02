@@ -275,12 +275,12 @@ Applyを推して適用後、以下を実行する
 
 ## <a name="ts_crib"> トラブルシュート虎の巻 </a>
 
-### <a name="flexconnect_vlan_mix_2"> セグメント(VLAN)が混ざったような挙動を示す場合の対処 その1 </a>
+### <a name="flexconnect_vlan_mix_1"> セグメント(VLAN)が混ざったような挙動を示す場合の対処 その1 </a>
 
 APごとの__VLAN Support__が正しく設定されていないと、全てのトラフィックが上流にタグ無しで出て行く場合がある。
 "その1"で述べた内容が大丈夫でも事象が継続する場合、接続中のAPの当該項目を確認すること。
 
-### <a name="flexconnect_vlan_mix_1"> FlexConnect利用時にセグメント(VLAN)が混ざったような挙動を示す場合の対処 その2</a>
+### <a name="flexconnect_vlan_mix_2"> FlexConnect利用時にセグメント(VLAN)が混ざったような挙動を示す場合の対処 その2</a>
 
 WLCにおけるこれまでの設定順序を逸脱した場合やWLANsにてSSIDの増減をAP登録後に行った場合に、USER用SSIDに接続しているにも関わらずMGMTセグメントのアドレスが降ってくるor疎通ができてしまうなど、VLAN-SSIDのマッピングが崩れたような事象が発生することがある。このような場合、FlexConnect Groupsを設定して修正できる。
 
