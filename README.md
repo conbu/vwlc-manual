@@ -106,13 +106,13 @@ ovaのデプロイからやり直す場合は、vWLCのインスタンスを右�
 APをJOINさせるには評価版ライセンスを有効化する必要があります。
 
 1.  Web からログインする
-1.  MANAGEMENT -> Software Activation -> Licenses -> Base-ap-count
-1.  Priority を High に変更し Set Priority
+1.  MANAGEMENT -> Software Activation -> Licenses
+1.  ap_count (か何か最初から入っているもの) をクリック、activate にして Set Status ボタンを押す
 1.  EULAが表示されるので Accept
 1.  Apply
 1.  ライセンスを有効にするために WLC を再起動する。
   1.  COMMANDS -> Reboot -> Save and Reboot
-  1.  再起動のタイミングでインストール手順6と同様に、vSphereクライアントのコンソールで何かキーを押すことを忘れずに。。
+  1.  再起動のタイミングでインストール手順6と同様に、コンソールで何かキーを押すことを忘れずに。。
 1.  再起動後、Summary 画面に “200 Access Point Supported” と表示されていればOK
 
 
