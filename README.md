@@ -203,8 +203,8 @@ APへ以下の設定を行います。 AP内に登録されている旧証明書
 enableモードで以下を実行します。
 
 ```
-clear ap ip address
-clear ap ip default-gateway
+clear capwap ap ip address
+clear capwap ap ip default-gateway
 clear capwap private-config
 ```
 
