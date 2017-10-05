@@ -240,6 +240,15 @@ reload
 capwap ap controller ip address 10.255.255.51
 ```
 
+なおenableモードに入れない場合、工場出荷状態に初期化する必要があります。AP電源投入直後に"#####"とファームウェアが展開されている時にEscキーを押すことでrommonモードに入ることが出来ます。ここで以下の様に入力して設定を消し飛ばしましょう("ap:"はプロンプトです)。
+
+```
+ap: delete flash:private-multiple-fs
+ap: reset
+```
+
+再起動後に"capwap ap controller ip address"をやり直します。
+
 ## <a name="ap_join"> APのJOIN </a>
 
 APに静的アドレスを割り当てている場合は、コンソールに入り enable 後 以下のような設定を行います。
