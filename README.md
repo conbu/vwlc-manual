@@ -14,9 +14,10 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 - [IPv6のサポート/非サポート](#ipv6)
 - [CleanAirの有効化](#cleanair)
 - [NTP設定](#ntp)
-- [APのJOIN](#ap_join)
 - [APの証明書クリア手順](#ap_cert_clear)
 - [APのWLC上の設定](#wlc_ap_conf)
+- [APのJOIN](#ap_join)
+- [AP-Groupとの紐付け処理](#ap_join)
 - [トラブルシュート虎の巻](#ts_crib)
   - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
   - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
@@ -298,8 +299,11 @@ Applyを推して適用後、以下を実行する
 
 - flex connect のチェックが入っていることを確認
 
-## <a name="ap_join">  AP-Groupの作成と作成したAP-groupへのAPのJOIN </a>
-  - 左メニューのAdvancedから「AP group 」を選択。
+## <a name="ap_group">  AP-Groupの作成と作成したAP-groupへのAPのJOIN </a>
+
+![](images/ap-group.png)
+
+  - 左メニューのAdvancedから「AP groups」を選択。
   - 会場レイアウトに合わせて、AP Groupを作成する。(例:ホール前方=hall-front, ホール後方=hall-backなど)
   - 対象のAP-groupを選択し、WLANsのタブでそのAP-Groupから出力したいSSIDを登録する。
   - 対象のAP-groupを選択し、APsのタブを開き、そのAP-Groupに所属させたいAPを登録する。
