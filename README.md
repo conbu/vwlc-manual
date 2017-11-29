@@ -297,9 +297,13 @@ AP名はWLC上から変更します。
 Applyを推して適用後、以下を実行する
 
 - flex connect のチェックが入っていることを確認
-- AP-Groupの作成と作成したAP-groupへのAPのJOIN
+
+## <a name="ap_join">  AP-Groupの作成と作成したAP-groupへのAPのJOIN </a>
   - 左メニューのAdvancedから「AP group 」を選択。
-  - 対象のAP-groupを選択し、WLANsのタブで出力したいSSIDを登録
+  - 会場レイアウトに合わせて、AP Groupを作成する。(例:ホール前方=hall-front, ホール後方=hall-backなど)
+  - 対象のAP-groupを選択し、WLANsのタブでそのAP-Groupから出力したいSSIDを登録する。
+  - 対象のAP-groupを選択し、APsのタブを開き、そのAP-Groupに所属させたいAPを登録する。
+  - RF profileと紐付けて、bitrate制限をしたい場合には、RF Profileを上部の「WIRELESS」→「RF Profiles」で作成し、AP-Groupの設定内のタブで紐付けする。
   - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
 
 ## <a name="ts_crib"> トラブルシュート虎の巻 </a>
