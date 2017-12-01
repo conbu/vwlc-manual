@@ -23,6 +23,7 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
   - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
   - [無線LANクライアントの接続が頻繁に切れる場合](#client_load_balancing)
   - [各APのLoadProfileステータスがFailedになる](#loadprofile_failed)
+  - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
@@ -182,21 +183,49 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 
 はまりポイントとして、Advancedタブの以下の項目について確認していく。
 
+![](images/image16.png)
+
 - 「Client Exclusion」 の項目についてはEnabledのチェックを外す
 - 「P2P Blocking Action」をDropにする
   - これが無いと、同一APのSSIDに接続しているクライアント間の通信が遮断できない
   - 但しマネジメントセグメントでは無効にしておく
 - 「FlexConnect Local Switching」の項目にチェックを入れ、enabledとする。
 
-![](images/image16.png)
+![](images/wlan01.png)
+
+- 「DHCP Addr. Assignment」の Required の項目にチェックが入ってないことを確認する。
+　(有効になっているとIPv6のRAを妨げてしまうため)
+
+![](images/image08.png)
 
 - 「Client Load Balancing」は、複数AP間でクライアントを融通しあい極端にどこかのAPにクライアント数が偏らないようにしてくれる設定なので、基本的には入れておく。
   - 手動でクライアント数のバランシングを行うオペレーションが不要になる
   - 但し後述するように稀に接続断の頻発という事象を引き起こす場合がある
 - 「Clinent Band Select」の項目は2.4GHz/5GHz両方からSSIDを提供するときに、5GHz(802.11a)に優先して接続する設定なので、SSIDの設定状況に応じて選択する。
   - 2.4GHzと5GHzとでSSIDを分けた場合は不要、それ以外の場合は基本的に有効にしておくこと
-  
-![](images/image08.png)
+
+## <a name="rfprofile"> RF profile設定によるクライアント接続帯域の設定 </a>
+
+低帯域のbitrateでクライアントが接続すると、そのクライアントがボトルネックとなり、Wifi全体が遅くなるため、低bitrateのクライアント接続を絞る。
+上部メニュー「WIRELESS」から左メニューで「RF Profile」画面を開き、右上の「New」を選択しProfileを作成する。
+
+![](images/rfprofile01.png)
+
+作成後、同画面にて作成したProfileを選択し、「802.11」タブを選択。接続させたくない帯域を「disabled」に変更する。
+なお「Mandatory」は接続対応必須、「supported」はクライアント側がその帯域に対応しているのならば、クライアントに選択肢として提示するという設定。
+
+![](images/rfprofile02.png)
+
+このRF Profile設定は後述するAP-Group設定で使用することになる。
+
+
+## <a name="power"> APの電波出力の確認 </a>
+
+　- APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+  - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
+  
+![](images/power01.png)
+
 
 ## <a name="ipv6"> IPv6のサポート/非サポート: RA Guardの設定 </a>
 
@@ -305,11 +334,20 @@ Applyを推して適用後、以下を実行する
 ![](images/ap-group.png)
 
   - 左メニューのAdvancedから「AP groups」を選択。
+
+![](images/ap-group02.png)
+  
   - 会場レイアウトに合わせて、AP Groupを作成する。(例:ホール前方=hall-front, ホール後方=hall-backなど)
   - 対象のAP-groupを選択し、WLANsのタブでそのAP-Groupから出力したいSSIDを登録する。
+
+![](images/ap-group03.png)
+
+  - RF profileと紐付けて、bitrate制限をしたい場合には、前述のRF Profile作成手順で作成したProfileをこのRF Profileタブで紐付けする。
+
+![](images/ap-group04.png)
+
   - 対象のAP-groupを選択し、APsのタブを開き、そのAP-Groupに所属させたいAPを登録する。
-  - RF profileと紐付けて、bitrate制限をしたい場合には、RF Profileを上部の「WIRELESS」→「RF Profiles」で作成し、AP-Groupの設定内のタブで紐付けする。
-  - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+
 
 ## <a name="ts_crib"> トラブルシュート虎の巻 </a>
 
@@ -346,7 +384,6 @@ Client Load Balancing 機能が悪い方向に働いている可能性があり�
 WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing」のチェックボックスを外すと改善する場合があります。
 ただし設定変更時には一度すべてのクライアントの接続が切れるので注意。
 
-
 ### <a name="loadprofile_failed"> 各APのLoadProfileステータスがFailedになる </a>
 
 ![](images/loadprofile_client.png)
@@ -356,3 +393,10 @@ WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing
 
 ![](images/loadprofile_failed.png)
 
+### <a name="management_via_wireless"> 無線LANからWLCのGUIにアクセスできない場合 </a>
+
+管理用VLAN用のSSIDを用意した場合であってもWLCのGUIにアクセスできない場合は、Management Via Wireless項にあるEnable Controller Management to be accessible from Wireless Clientsのチェックを入れる。
+
+MANAGEMENT -> Management Via Wireless
+
+![](images/image19.png)
