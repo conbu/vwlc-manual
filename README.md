@@ -22,6 +22,7 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
   - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
   - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
   - [無線LANクライアントの接続が頻繁に切れる場合](#client_load_balancing)
+  - [各APのLoadProfileステータスがFailedになる](#loadprofile_failed)
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
@@ -344,3 +345,14 @@ WLCにおけるこれまでの設定順序を逸脱した場合やWLANsにてSSI
 Client Load Balancing 機能が悪い方向に働いている可能性があります。
 WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing」のチェックボックスを外すと改善する場合があります。
 ただし設定変更時には一度すべてのクライアントの接続が切れるので注意。
+
+
+### <a name="loadprofile_failed"> 各APのLoadProfileステータスがFailedになる </a>
+
+![](images/loadprofile_client.png)
+
+上記の画面において、LoadProfileがFailedと表示されることがあります。
+これは以下の「Client」の数値が閾値となっていて、各APでこの閾値を超えると「LoadProfile: Failed」と表示されてしまいます。
+
+![](images/loadprofile_failed.png)
+
