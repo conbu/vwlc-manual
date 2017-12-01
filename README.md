@@ -21,6 +21,7 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
   - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
   - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
   - [無線LANクライアントの接続が頻繁に切れる場合](#client_load_balancing)
+  - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
@@ -336,3 +337,11 @@ WLCにおけるこれまでの設定順序を逸脱した場合やWLANsにてSSI
 Client Load Balancing 機能が悪い方向に働いている可能性があります。
 WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing」のチェックボックスを外すと改善する場合があります。
 ただし設定変更時には一度すべてのクライアントの接続が切れるので注意。
+
+### <a name="management_via_wireless"> 無線LANからWLCのGUIにアクセスできない場合 </a>
+
+管理用VLAN用のSSIDを用意した場合であってもWLCのGUIにアクセスできない場合は、Management Via Wireless項にあるEnable Controller Management to be accessible from Wireless Clientsのチェックを入れる。
+
+MANAGEMENT -> Management Via Wireless
+
+![](images/image19.png)
