@@ -344,4 +344,4 @@ WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing
 
 MANAGEMENT -> Management Via Wireless
 
-![](images/image18.png)
+![](images/image19.png)
