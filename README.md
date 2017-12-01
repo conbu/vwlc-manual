@@ -181,13 +181,20 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 
 はまりポイントとして、Advancedタブの以下の項目について確認していく。
 
+![](images/image16.png)
+
 - 「Client Exclusion」 の項目についてはEnabledのチェックを外す
 - 「P2P Blocking Action」をDropにする
   - これが無いと、同一APのSSIDに接続しているクライアント間の通信が遮断できない
   - 但しマネジメントセグメントでは無効にしておく
 - 「FlexConnect Local Switching」の項目にチェックを入れ、enabledとする。
 
-![](images/image16.png)
+![](images/wlan01.png)
+
+- 「DHCP Addr. Assignment」の Required の項目にチェックが入ってないことを確認する。
+　(有効になっているとIPv6のRAを妨げてしまうため)
+
+![](images/image08.png)
 
 - 「Client Load Balancing」は、複数AP間でクライアントを融通しあい極端にどこかのAPにクライアント数が偏らないようにしてくれる設定なので、基本的には入れておく。
   - 手動でクライアント数のバランシングを行うオペレーションが不要になる
@@ -195,7 +202,6 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 - 「Clinent Band Select」の項目は2.4GHz/5GHz両方からSSIDを提供するときに、5GHz(802.11a)に優先して接続する設定なので、SSIDの設定状況に応じて選択する。
   - 2.4GHzと5GHzとでSSIDを分けた場合は不要、それ以外の場合は基本的に有効にしておくこと
   
-![](images/image08.png)
 
 ## <a name="ipv6"> IPv6のサポート/非サポート: RA Guardの設定 </a>
 
@@ -304,11 +310,21 @@ Applyを推して適用後、以下を実行する
 ![](images/ap-group.png)
 
   - 左メニューのAdvancedから「AP groups」を選択。
+
+![](images/ap-group02.png)
+  
   - 会場レイアウトに合わせて、AP Groupを作成する。(例:ホール前方=hall-front, ホール後方=hall-backなど)
   - 対象のAP-groupを選択し、WLANsのタブでそのAP-Groupから出力したいSSIDを登録する。
-  - 対象のAP-groupを選択し、APsのタブを開き、そのAP-Groupに所属させたいAPを登録する。
+
+![](images/ap-group03.png)
+
   - RF profileと紐付けて、bitrate制限をしたい場合には、RF Profileを上部の「WIRELESS」→「RF Profiles」で作成し、AP-Groupの設定内のタブで紐付けする。
   - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+
+![](images/ap-group04.png)
+
+  - 対象のAP-groupを選択し、APsのタブを開き、そのAP-Groupに所属させたいAPを登録する。
+
 
 ## <a name="ts_crib"> トラブルシュート虎の巻 </a>
 
