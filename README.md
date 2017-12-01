@@ -201,7 +201,29 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
   - 但し後述するように稀に接続断の頻発という事象を引き起こす場合がある
 - 「Clinent Band Select」の項目は2.4GHz/5GHz両方からSSIDを提供するときに、5GHz(802.11a)に優先して接続する設定なので、SSIDの設定状況に応じて選択する。
   - 2.4GHzと5GHzとでSSIDを分けた場合は不要、それ以外の場合は基本的に有効にしておくこと
-  
+
+## <a name="rfprofile"> RF profile設定によるクライアント接続帯域の設定 </a>
+
+低帯域のbitrateでクライアントが接続すると、そのクライアントがボトルネックとなり、Wifi全体が遅くなるため、低bitrateのクライアント接続を絞る。
+上部メニュー「WIRELESS」から左メニューで「RF Profile」画面を開き、右上の「New」を選択しProfileを作成する。
+
+![](images/rfprofile01.png)
+
+作成後、同画面にて作成したProfileを選択し、「802.11」タブを選択。接続させたくない帯域を「disabled」に変更する。
+なお「Mandatory」は接続対応必須、「supported」はクライアント側がその帯域に対応しているのならば、クライアントに選択肢として提示するという設定。
+
+![](images/rfprofile02.png)
+
+このRF Profile設定は後述するAP-Group設定で使用することになる。
+
+
+## <a name="power"> APの電波出力の確認 </a>
+
+　- APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+  - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
+  
+![](images/power01.png)
+
 
 ## <a name="ipv6"> IPv6のサポート/非サポート: RA Guardの設定 </a>
 
@@ -318,8 +340,7 @@ Applyを推して適用後、以下を実行する
 
 ![](images/ap-group03.png)
 
-  - RF profileと紐付けて、bitrate制限をしたい場合には、RF Profileを上部の「WIRELESS」→「RF Profiles」で作成し、AP-Groupの設定内のタブで紐付けする。
-  - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+  - RF profileと紐付けて、bitrate制限をしたい場合には、前述のRF Profile作成手順で作成したProfileをこのRF Profileタブで紐付けする。
 
 ![](images/ap-group04.png)
 
