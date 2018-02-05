@@ -75,7 +75,7 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
   1.  ISOイメージを使うの項目でアップしたISOディスクイメージを選択
   1.  別のストレージに保存するはチェックを”しない”
   1.  純仮想化モードを使う（Viritio)のチェックは”外す”
-  
+
 ## <a name="install-common"> vWLCインストール共通手順 </a>
 
 これ以降は対話インストールを行う。入力を間違えたら "-" で戻れると表示があるが、バグのため実際には壊れてしまい、次回起動時にクラッシュループするようになるので、- は使えない。間違えたら ova デプロイやインストールをやり直す。
@@ -223,7 +223,7 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 
 　- APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
   - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
-  
+
 ![](images/power01.png)
 
 
@@ -235,9 +235,43 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ## <a name="cleanair"> CleanAirの有効化 </a>
 
-<span>802.11a/n/acと802.11b/g/nともに CleanAirを有効化しておく。
+`802.11a/n/ac` と `802.11b/g/n` ともに CleanAir を有効化しておく。
 
-![](images/image00.png)
+1. `CleanAir` 右の `Enabled` をチェック
+1. `Apply` する。 ついでに `Save Configuration` もしとこう。
+1. `Event Driven RRM` 右の `(Change Settings)` をクリックして RRM 設定に入る
+
+
+![](images/cleanair_01.png)
+
+1. `Avoid Persistent Non-WiFi Interference` を有効にする<br>
+      Cisco WLC が継続的な WiFi 以外の干渉を無視できるようにします。
+1. `Event Driven RRM` 項目の `DERRM` を `Enabled` にチェック
+1. `Sensitivity Threshold` は `Medium` 設定<br>
+      干渉しきい値は以下の通りになってる。
+      * low: 35
+      * medium: 50
+      * high: 60
+1. `Apply` する。 ついでに `Save Configuration` もしとこう。
+
+![](images/cleanair_02.png)
+
+WLCのバージョンにより、`CleanAir Admin Status` が有効でない場合があるので確認する
+
+1. `802.11a/n/ac` と `802.11b/g/n` ともに確認しよう。
+
+![](images/cleanair_03.png)
+
+1. 画面右側の `▼` をクリックして、 `Configure` をクリック
+
+![](images/cleanair_04.png)
+
+
+1. `CleanAir Admin Status` が `Enabled` であることを確認する。
+1. 同様に、`802.11a/n/ac` と `802.11b/g/n` 両方確認する。
+
+![](images/cleanair_05.png)
+
 
 ## <a name="ntp">NTP設定</a>
 
@@ -336,7 +370,7 @@ Applyを推して適用後、以下を実行する
   - 左メニューのAdvancedから「AP groups」を選択。
 
 ![](images/ap-group02.png)
-  
+
   - 会場レイアウトに合わせて、AP Groupを作成する。(例:ホール前方=hall-front, ホール後方=hall-backなど)
   - 対象のAP-groupを選択し、WLANsのタブでそのAP-Groupから出力したいSSIDを登録する。
 
