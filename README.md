@@ -31,7 +31,8 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 - [Cisco Virtual Wireless Controller 導入ガイド](https://www.google.com/url?q=http://www.cisco.com/cisco/web/support/JP/111/1116/1116689_virtual-wlan-dg-00.html&sa=D&ust=1487673384885000&usg=AFQjCNGohhxbRNW2BpE4J4bU9vF0XSYuyQ)
 
 ## <a name="requirements"> 前提とする環境</a>
-WIP
+
+* 複数台の AP(Cisco Aironet) 配置する構成を取る場合。
 
 ## <a name="vwlc_env"> 動作環境ごとのインストール手順 </a>
 
