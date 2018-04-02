@@ -31,7 +31,8 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 - [Cisco Virtual Wireless Controller 導入ガイド](https://www.google.com/url?q=http://www.cisco.com/cisco/web/support/JP/111/1116/1116689_virtual-wlan-dg-00.html&sa=D&ust=1487673384885000&usg=AFQjCNGohhxbRNW2BpE4J4bU9vF0XSYuyQ)
 
 ## <a name="requirements"> 前提とする環境</a>
-WIP
+
+* 複数台の AP(Cisco Aironet) 配置する構成を取る場合。
 
 ## <a name="vwlc_env"> 動作環境ごとのインストール手順 </a>
 
@@ -269,9 +270,43 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ## <a name="cleanair"> CleanAirの有効化 </a>
 
-<span>802.11a/n/acと802.11b/g/nともに CleanAirを有効化しておく。
+`802.11a/n/ac` と `802.11b/g/n` ともに CleanAir を有効化しておく。
 
-![](images/image00.png)
+1. `CleanAir` 右の `Enabled` をチェック
+1. `Apply` する。 ついでに `Save Configuration` もしとこう。
+1. `Event Driven RRM` 右の `(Change Settings)` をクリックして RRM 設定に入る
+
+
+![](images/cleanair_01.png)
+
+1. `Avoid Persistent Non-WiFi Interference` を有効にする<br>
+      Cisco WLC が継続的な WiFi 以外の干渉を無視できるようにします。
+1. `Event Driven RRM` 項目の `DERRM` を `Enabled` にチェック
+1. `Sensitivity Threshold` は `Medium` 設定<br>
+      干渉しきい値は以下の通りになってる。
+      * low: 35
+      * medium: 50
+      * high: 60
+1. `Apply` する。 ついでに `Save Configuration` もしとこう。
+
+![](images/cleanair_02.png)
+
+WLCのバージョンにより、`CleanAir Admin Status` が有効でない場合があるので確認する
+
+1. `802.11a/n/ac` と `802.11b/g/n` ともに確認しよう。
+
+![](images/cleanair_03.png)
+
+1. 画面右側の `▼` をクリックして、 `Configure` をクリック
+
+![](images/cleanair_04.png)
+
+
+1. `CleanAir Admin Status` が `Enabled` であることを確認する。
+1. 同様に、`802.11a/n/ac` と `802.11b/g/n` 両方確認する。
+
+![](images/cleanair_05.png)
+
 
 ## <a name="ntp">NTP設定</a>
 
