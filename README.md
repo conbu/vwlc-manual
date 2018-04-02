@@ -75,52 +75,86 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
   1.  ISOイメージを使うの項目でアップしたISOディスクイメージを選択
   1.  別のストレージに保存するはチェックを”しない”
   1.  純仮想化モードを使う（Viritio)のチェックは”外す”
-  
+
 ## <a name="install-common"> vWLCインストール共通手順 </a>
 
-これ以降は対話インストールを行う。入力を間違えたら "-" で戻れると表示があるが、バグのため実際には壊れてしまい、次回起動時にクラッシュループするようになるので、- は使えない。間違えたら ova デプロイやインストールをやり直す。
 
-1.  Would you like to terminate autoinstall? [yes]? yes
-  1.  これを早めに入力しないとautoinstall が勝手に走ってしまう!
-1.  System Name はそのままでOK
-1.  Enter Administrative User Name: ${ここに共通ユーザ名}
-1.  Enter Administrative Password: ${ここに共通パスワード}
-  1. おそらくキーボードがUS配列になっているので、JISキーボードを使って @ を入力する際は別の記号として入力されるかもしれない。わからなくならなければWeb画面から変更できるので大丈夫
-1.  Service Interface IP Address Configration [static][DHCP]: DHCP
-  1. このインタフェイスは使わない
-1. Management Interface IP Address : ${マネジメントセグメントのvWLC用IPv4アドレス}
-  1. このインタフェイスに AP が JOIN する。Web/CLI もここ
-1. Management Interface Netmask: ${マネジメントセグメントのネットマスク}
-1. Management Interface Default Router: ${マネジメントセグメントのゲートウェイアドレス}
-1. Management Interface VLAN Identifier (0 = untagged): 0
-1. Management Interface Port Num [1 to 1]: 1
-1. Management Interface DHCP Server IP Address: ${適当なアドレス}
-  1. 使わない, あればDHCPサーバのアドレス
-1.  Virtual Gateway IP Address: 1.1.1.1
-  1.  Webログイン認証用ダミー IP アドレス。使わない
-1.  Mobility/RF Group Name: CONBU01
-2.  Network Name (SSID): CONBU
-  1. 後で変更するのでここではなんでもよい
-1.  Configure DHCP Bridging Mode [yes][NO]: no
-1.  Allow Static IP Addresses [YES][no]: yes
-1.  Configure a RADIUS Server now? [YES][no]: no
-1.  Enter Country Code list (enter 'help' for a list of countries) [US]: J2
-  1.  P型番の AP は J2, Q型番は J4
-1.  Enable 802.11b Network [YES][no]: yes
-1.  Enable 802.11a Network [YES][no]: yes
-1.  Enable 802.11g Network [YES][no]: yes
-1.  Enable Auto-RF [YES][no]: yes
-1.  Configure a NTP server now? [YES][no]: no
-1.  Configure the system time now? [YES][no] :yes
-1.  would you like to configure IPv6 parameters [YES][no] :no
-  1.  9.8からっぽい。とりあえずnoにした。
-1.  Configureation correct? IF yes, system will save it and reset. [yes][NO]: yes
-  1.  ここで no を選ぶと次回起動時にクラッシュループするので間違えた場合は ova デプロイからやり直す)
-1.  自動的に再起動される
-1.  再起動が完了したらWebブラウザから https://${マネジメントセグメントのvWLC用IPv4アドレス} (e.g. https://10.55.255.51 ) にアクセスしてみる
-  1.  pingを実行する。 ping 10.255.254.1 が通らない場合にはネットワークアダプタ設定を確認し、1と2を逆にして確認する。
+  これ以降は対話インストールを行う。入力を間違えたら "-" で戻れると表示があるが、バグのため実際には壊れてしまい、次回起動時にクラッシュループするようになるので、- は使えない。間違えたら ova デプロイやインストールをやり直す。
 
-ovaのデプロイからやり直す場合は、vWLCのインスタンスを右クリックして「ディスクから削除(K)」を行ったあと 2 からの手順を行います。
+  1. Would you like to terminate autoinstall? [yes]: `yes`
+      * **これを早めに入力しないと autoinstall が勝手に走ってしまう!**
+  1. System Name はそのままでOK
+      * SNMP などの設定であとから変更する場合もあるかもしれないのでホスト名にすると良い
+
+
+  1. Enter Administrative User Name: `${ここに共通ユーザ名}`
+  1. Enter Administrative Password: `${ここに共通パスワード}`
+      * おそらくキーボードがUS配列になっているので、JISキーボードを使って @ を入力する際は別の記号として入力されるかもしれない。わからなくならなければWeb画面から変更できるので大丈夫
+
+
+  1. Service Interface IP Address Configration [static][DHCP]: `static`
+      * **このインタフェイスは使わない**<br> が、NICを同一ネットワークに刺してると問題になる可能性があるため static で設定する。
+  1. Service Interface IP Address: `192.0.2.1`
+  1. Service Interface Netmask: `255.255.255.252`
+
+
+  1. Management Interface IP Address: `${マネジメントセグメントのvWLC用IPv4アドレス}`
+      * このインタフェイスに AP が JOIN する。Web / CLI もここ
+  1. Management Interface Netmask: `${マネジメントセグメントのネットマスク}`
+  1. Management Interface Default Router: `${マネジメントセグメントのゲートウェイアドレス}`
+  1. Management Interface VLAN Identifier (0 = untagged): `0`
+  1. Management Interface Port Num [1 to 1]: `1`
+  1. Management Interface DHCP Server IP Address: `${適当なアドレス}`
+      * **使わない**<br> Management Interface と同じ、ネットワーク内のアドレスを適当にアサインする。
+
+
+  1. Virtual Gateway IP Address: `192.0.2.5`
+      * Webログイン認証用ダミー IPアドレス。使わない
+
+
+  1. Mobility/RF Group Name: `CONBU01`
+  2. Network Name (SSID): `CONBU`
+      * 後で変更するのでここではなんでもよい
+
+
+  1. Configure DHCP Bridging Mode [yes][NO]: `no`
+  1. Allow Static IP Addresses [YES][no]: `yes`
+      * DHCP で IPアドレス を配布するが、 Static IP も許容するか。
+  1. Configure a RADIUS Server now? [YES][no]: `no`
+  1. Enter Country Code list (enter 'help' for a list of countries) [US]: `J2`
+      * P型番の AP は `J2`<br>Q型番の AP は `J4`
+      * このあと、両方対応するために設定をするのでとりあえず、 `J2` にする。
+
+
+  1. Enable 802.11b Network [YES][no]: `no`
+      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
+  1. Enable 802.11a Network [YES][no]: `no`
+      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
+  1. Enable 802.11g Network [YES][no]: `no`
+      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
+  1. Enable Auto-RF [YES][no]: `yes`
+
+
+  1. Configure a NTP server now? [YES][no]: `no`
+      * 後ほど、 WebGUI で設定するのでとりあえず `no`
+  1. Configure the system time now? [YES][no]: `yes`
+  1. Enter the date in MM/DD/YY format: `${現在の日付}`
+  1. Enter the time in HH:MM:SS format: `${現在の時刻}`
+
+
+
+  1. would you like to configure IPv6 parameters [YES][no]: `no`
+      * 9.8からっぽい。とりあえず `no` にした。
+  1. Configureation correct? IF yes, system will save it and reset. [yes][NO]: `yes`
+      * **ここで no を選ぶと次回起動時にクラッシュループするので間違えた場合は ova デプロイからやり直す)**
+  1. 自動的に再起動される
+
+
+  1. 再起動が完了したらWebブラウザから https://`${マネジメントセグメントのvWLC用IPv4アドレス}` <br>(e.g. https://10.55.255.51 ) にアクセスしてみる
+      * ping を実行する。 ping 10.55.255.51 が通らない場合にはネットワークアダプタ設定を確認し、`インターフェイス1` と `インターフェイス2` を逆にして確認する。
+
+
+  ovaのデプロイからやり直す場合は、vWLCのインスタンスを右クリックして「ディスクから削除(K)」を行ったあと 2 からの手順を行います。
 
 
 ## <a name="license"> ライセンス </a>
@@ -223,7 +257,7 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 
 　- APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
   - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
-  
+
 ![](images/power01.png)
 
 
@@ -336,7 +370,7 @@ Applyを推して適用後、以下を実行する
   - 左メニューのAdvancedから「AP groups」を選択。
 
 ![](images/ap-group02.png)
-  
+
   - 会場レイアウトに合わせて、AP Groupを作成する。(例:ホール前方=hall-front, ホール後方=hall-backなど)
   - 対象のAP-groupを選択し、WLANsのタブでそのAP-Groupから出力したいSSIDを登録する。
 
