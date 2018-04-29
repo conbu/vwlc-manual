@@ -299,9 +299,13 @@ reload
 ```
 
 再起動後、show capwap ip config を実行すると、WLCの接続先設定が初期化されているのがわかる。
-ここに改めていかの様にvWLCのアドレスを設定します。
+ここに改めて下記の様にvWLCのアドレスを設定します。
+また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
+(通常だと、`APaaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
+
 
 ```
+capwap ap hostname <AP Name>
 capwap ap controller ip address 10.255.255.51
 ```
 
@@ -319,9 +323,11 @@ ap: reset
 APに静的アドレスを割り当てている場合は、コンソールに入り enable 後 以下のような設定を行います。
 
 ```
+capwap ap hostname <AP Name>
 capwap ap ip address 10.255.1.101 255.255.252.0
 capwap ap ip default-gateway 10.255.1.1
 capwap ap controller ip address 10.255.255.51
+
 ```
 
 それぞれこの設定におけるマネジメントネットワークの想定は以下の通りです。
