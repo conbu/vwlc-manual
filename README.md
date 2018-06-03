@@ -43,18 +43,18 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 
 1. WindowsマシンからvSphere ClientでESXiホストへ接続する
 1. ファイル(F) → ovfテンプレートのデプロイ(D)... → vWLCの ova を選択
-  1.  名前は適当につける。
-  1.  シック・プロビジョニング(Lazy)を選択
-  1.  ネットワークのマッピングはとりあえずそのまま
-  1.  デプロイ後にパワーオンはしない
-1.  ネットワーク構成の確認
-  1.  概要： vWLCにはネットワークアダプタが2つあり、両方とも何かをアサインせねばならない。vWLCはローカルモード（全トラフィックがWLC経由）をサポートしないため、実質管理用インタフェイスが一つあればよいのだが、2つアサインしなければ進まない
-  1.  デプロイしたvWLCを右クリックして 設定の編集
-  1.  ネットワーク アダプタ 1 と 2 があり、1は管理セグメントに接続、2はダミーの仮想スイッチに接続する。
-    1.  ネットワークアダプタ設定は1と2が逆になってしまうこともある。手順9まで進んでもpingが通らない場合には逆にして確認する。
-1.  コンソールタブを表示させて vWLC をパワーオンする
-1.  初回起動、自動的にディスクへのインストーラが走り(約1分)、完了すると自動的にリブート
-1.  次回起動  Press any key to use this terminal as the default terminal が数回表示される。このときにすかさず何かキーを押す（あらかじめvSphere上でコンソールにフォーカスしておくとよい)。もしここで押せないと、ova デプロイからやり直しになる。
+  1. 名前は適当につける。
+  1. シック・プロビジョニング(Lazy)を選択
+  1. ネットワークのマッピングはとりあえずそのまま
+  1. デプロイ後にパワーオンはしない
+1. ネットワーク構成の確認
+  1. 概要: vWLCにはネットワークアダプタが2つあり、両方とも何かをアサインせねばならない。<br>vWLCはローカルモード（全トラフィックがWLC経由）をサポートしないため、実質管理用インタフェイスが一つあればよいのだが、**2つアサインしなければ進まない**
+  1. デプロイしたvWLCを右クリックして 設定の編集
+  1. ネットワーク アダプタ1 と アダプタ2 があり、アダプタ1 は管理セグメントに接続、 アダプタ2 はダミーの仮想スイッチに接続する。
+    1. ネットワークアダプタ設定は アダプタ1 と アダプタ2 が逆になってしまうこともある。<br>手順9まで進んでもpingが通らない場合には逆にして確認する。
+1. コンソールタブを表示させて vWLC をパワーオンする
+1. 初回起動、自動的にディスクへのインストーラが走り(約1分)、完了すると自動的にリブート
+1. 次回起動  `Press any key to use this terminal as the default terminal` が数回表示される。<br>このときにすかさず何かキーを押す（あらかじめvSphere上でコンソールにフォーカスしておくとよい)。もしここで押せないと、ova デプロイからやり直しになる。
 
 ![Press any keyの画面](images/image01.png)
 
@@ -63,18 +63,63 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 さくらのクラウドの場合、ovaファイルを利用するのではなくisoイメージからvwlcを作成します。isoイメージはCisco公式から落とすことができます。（要：Ciscoの会員登録）2017/03現在 [WLCダウンロード画面](https://software.cisco.com/download/type.html?mdfid=284464214&i=rm)
 ここから必要なisoイメージをダウンロードしておいてください。
 
-1. . さくらのクラウドにログインするさくらのクラウドにログインする
+1. さくらのクラウドにログインするさくらのクラウドにログインする
 1. Ciscoから落としたisoイメージをさくらのクラウドにアップします。手順はこちらを参照してください。[ISOディスクアップロード](https://help.sakura.ad.jp/hc/ja/articles/206209061-ISO%E3%83%87%E3%82%A3%E3%82%B9%E3%82%AF%E3%82%A2%E3%83%83%E3%83%97%E3%83%AD%E3%83%BC%E3%83%89)
-1. サーバを作成します。シンプルモードではなく詳細モードで作成します。
-  1.  コア数１
-  1.  メモリ３GB
-  1.  ディスクレス
-  1.  ディスクタイプ　SSDタイプ
-  1.  ディスクソース　ブランク（空のディスク）
-  1.  ディクスサイズ　２０GB
-  1.  ISOイメージを使うの項目でアップしたISOディスクイメージを選択
-  1.  別のストレージに保存するはチェックを”しない”
-  1.  純仮想化モードを使う（Viritio)のチェックは”外す”
+1. サーバを作成します。シンプルモードではなく**詳細モード**で作成します。
+
+
+
+### 1. サーバープラン
+
+|||
+|-:|-:|
+| 仮想コア | 1 |
+| メモリ | 3 GB |
+
+![](images/sakura_iaas/sakura_iaas_01.png)
+
+
+### 2. ディスク
+
+|||
+|-:|-:|
+| 新規ディスクを作成 |
+| ディスクプラン | SSDプラン |
+| ディスクソース | ブランク |
+| ディスクサイズ | 20GB |
+| ISOイメージを使う | **ここは各自アップロードした物を選択** |
+| 別ストレージに収容する | チェック・オフ |
+| 準仮想化 モードを使う(Virtio) | **チェック・オフ** |
+
+
+![](images/sakura_iaas/sakura_iaas_02.png)
+
+
+### 3. NIC
+
+|||
+|-:|-:|
+| 切断 |
+| 準仮想化 モードを使う(Virtio) | **チェック・オフ** |
+
+
+![](images/sakura_iaas/sakura_iaas_03.png)
+
+
+### 6. サーバの情報
+
+![](images/sakura_iaas/sakura_iaas_04.png)
+
+### 7. その他のオプション
+
+**作成後すぐ起動のチェックはオフする**
+
+![](images/sakura_iaas/sakura_iaas_05.png)
+
+
+### NIC の追加
+
+できた仮想マシンを選択し NIC タブから新規NIC を作成し、 管理セグメントの Switchを接続し仮想マシーンを起動する。
 
 ## <a name="install-common"> vWLCインストール共通手順 </a>
 
@@ -121,9 +166,8 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
   1. Allow Static IP Addresses [YES][no]: `yes`
       * DHCP で IPアドレス を配布するが、 Static IP も許容するか。
   1. Configure a RADIUS Server now? [YES][no]: `no`
-  1. Enter Country Code list (enter 'help' for a list of countries) [US]: `J2`
-      * P型番の AP は `J2`<br>Q型番の AP は `J4`
-      * このあと、両方対応するために設定をするのでとりあえず、 `J2` にする。
+  1. Enter Country Code list (enter 'help' for a list of countries) [US]: `J2,J4`
+      * P型番の AP は `J2` <br>Q型番の AP は `J4`
 
 
   1. Enable 802.11b Network [YES][no]: `no`
@@ -161,28 +205,28 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 
 APをJOINさせるには評価版ライセンスを有効化する必要があります。
 
-1.  Web からログインする
-1.  MANAGEMENT -> Software Activation -> Licenses
-1.  ap_count (か何か最初から入っているもの) をクリック、activate にして Set Status ボタンを押す
-1.  EULAが表示されるので Accept
-1.  Apply
-1.  ライセンスを有効にするために WLC を再起動する。
-  1.  COMMANDS -> Reboot -> Save and Reboot
-  1.  再起動のタイミングでインストール手順6と同様に、コンソールで何かキーを押すことを忘れずに。。
-1.  再起動後、Summary 画面に “200 Access Point Supported” と表示されていればOK
+1. Web からログインする
+2. MANAGEMENT -> Software Activation -> Licenses
+3. ap_count (か何か最初から入っているもの) をクリック、activate にして Set Status ボタンを押す
+4. EULAが表示されるので Accept
+5. Apply
+6. ライセンスを有効にするために WLC を再起動する。
+    1. COMMANDS -> Reboot -> Save and Reboot
+    2. 再起動のタイミングでインストール手順6と同様に、コンソールで何かキーを押すことを忘れずに。。
+7. 再起動後、Summary 画面に “200 Access Point Supported” と表示されていればOK
 
 
 ## <a name="country-code"> 国コード設定 </a>
 
 APをJOINさせるには国コードを合わせる必要があります。国コードを変更するには一度インターフェイスをダウンさせる必要があるため、以下の手順を実施します。
 
-1.  webGUI上部メニューから「WIRELESS」を選択し、次に左メニューから802.11a/n/acをプルダウンし、「Network」を選択する。
-1.  Generalの項目の802.11a Network Statusの「Enabled」チェックボックスを外し、無効化します。外したら右上の「Apply」をクリックして設定適用してください。
+1. webGUI上部メニューから「WIRELESS」を選択し、次に左メニューから802.11a/n/acをプルダウンし、「Network」を選択する。
+2. Generalの項目の802.11a Network Statusの「Enabled」チェックボックスを外し、無効化します。外したら右上の「Apply」をクリックして設定適用してください。
 ![](images/image03.png)
-1.  手順2.と同じ手順を802.11b/g/nの「Network」で実施し、無効化します。
-1.  左メニューから「Contry」の項目を選択し、国コードを設定します。J2,J4の両方を選択してください。選択したら右上の「Apply」をクリックして設定適用します。
+1. 手順2.と同じ手順を802.11b/g/nの「Network」で実施し、無効化します。
+2. 左メニューから「Contry」の項目を選択し、国コードを設定します。J2,J4の両方を選択してください。選択したら右上の「Apply」をクリックして設定適用します。
 ![](images/image02.png)
-1.  手順2.手順3で無効化したインターフェイスを有効化します。
+1. 手順2.手順3で無効化したインターフェイスを有効化します。
 
 
 
@@ -289,6 +333,7 @@ enableモードで以下を実行します。
 ```
 clear capwap ap ip address
 clear capwap ap ip default-gateway
+clear capwap ap controller ip address
 clear capwap private-config
 ```
 
@@ -298,11 +343,18 @@ clear capwap private-config
 reload
 ```
 
-再起動後、show capwap ip config を実行すると、WLCの接続先設定が初期化されているのがわかる。
+再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかる。
 ここに改めて下記の様にvWLCのアドレスを設定します。
 また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
 (通常だと、`APaaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
 
+Cisco デフォルトの `username` と `password` は下記となります
+
+|||
+|:--------------|:------|
+| username      | Cisco |
+| password      | Cisco |
+| enable secret | Cisco |
 
 ```
 capwap ap hostname <AP Name>
@@ -320,12 +372,17 @@ ap: reset
 
 ## <a name="ap_join"> APのJOIN </a>
 
-APに静的アドレスを割り当てている場合は、コンソールに入り enable 後 以下のような設定を行います。
+AP の Join 方法は二通りあります
+
+* DHCP による IPアドレス 取得と join
+* APに静的アドレスを指定する方法
+
+CONBU では、 `DHCP による IPアドレス 取得と join` を推奨します。
+
+DHCP による IPアドレス 取得と join の方法を記載します。
 
 ```
 capwap ap hostname <AP Name>
-capwap ap ip address 10.255.1.101 255.255.252.0
-capwap ap ip default-gateway 10.255.1.1
 capwap ap controller ip address 10.255.255.51
 
 ```
@@ -334,7 +391,6 @@ capwap ap controller ip address 10.255.255.51
 
 - ネットワーク: 10.255.1.0/24
 - デフォルトゲートウェイのアドレス: 10.255.1.1
-- APのアドレス: 10.255.1.101
 - vWLCのアドレス: 10.255.255.51
 
 このコマンドは write の必要はありません。
@@ -348,15 +404,15 @@ AP名はWLC上から変更します。
 
 ![](images/image09.png)
 
-- まず、AP High Availability のNameに何かしら文字列を入力する必要がある
-  - 入れないと各種設定でエラーになる
+  * まず、AP High Availability のNameに何かしら文字列を入力する必要がある
+    * 入れないと各種設定でエラーになる
 
 ![](images/image10.png)
 
-- AP名とAP modeをそれぞれ変更する。
-  - AP名はそれぞれのイベントでの命名規則に沿って設定する。
-- AP modeをFlexConnectに変更する。
-  - なおAPをWLCに接続した直後にファームウェアの更新が走る場合がある。この場合、AP modeを変更できない。更新が終了し、再度WLCに接続されるまで待つこと。
+  * AP名とAP modeをそれぞれ変更する。
+    * AP名はそれぞれのイベントでの命名規則に沿って設定する。
+  * AP modeをFlexConnectに変更する。
+    * なおAPをWLCに接続した直後にファームウェアの更新が走る場合がある。この場合、AP modeを変更できない。更新が終了し、再度WLCに接続されるまで待つこと。
 
 ![](images/image12.png)   
 
