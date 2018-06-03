@@ -232,9 +232,9 @@ APをJOINさせるには国コードを合わせる必要があります。国�
 
 ## <a name="vlan_add"> VLAN追加設定 </a>
 
-1.  webGUI上部メニューから「CONTROLLER」を選択、左メニューから「Interface」を選択。Interfaceに新規にユーザ用VLANを追加します。Interface名は「user」など汎用的な名称で設定すると使いまわしがききます。
-1.  ユーザ用VLAN番号はイベント指定の番号を追加。CONBUでは典型的には VLAN 3001 を利用。
-1.  設定項目ではIPアドレス、netmask、Gatewayの割り当てを設定する。
+1. webGUI上部メニューから「CONTROLLER」を選択、左メニューから「Interface」を選択。Interfaceに新規にユーザ用VLANを追加します。Interface名は「user」など汎用的な名称で設定すると使いまわしがききます。
+2. ユーザ用VLAN番号はイベント指定の番号を追加。CONBUでは典型的には VLAN 3001 を利用。
+3. 設定項目ではIPアドレス、netmask、Gatewayの割り当てを設定する。
 ![](images/image05.png)
 
 ## <a name="ssid"> SSIDの設定と注意点 </a>
