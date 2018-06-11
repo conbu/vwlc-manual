@@ -531,3 +531,27 @@ WLANｓ以下のSSIDに対応するプロファイルの「Client Load Balancing
 MANAGEMENT -> Management Via Wireless
 
 ![](images/image19.png)
+
+
+### <a name="client_load_balancing"> WLCとAPとの接続に不具合が見受けられる場合 </a>
+
+1. APはDHCPのアドレスを取れており、かつ、APからWLCへのpingは飛ぶのに、joinが出来ない場合
+
+結論としてはdefault gateway設定の見直しとdefault gatewayに指定されているVPCルータのstatic route設定が必要。
+
+事象が発生している場合、以下のようなメッセージがAPのシリアルコンソール上に表示されている。
+
+    %CAPWAP-3-DHCP_RENEW: Could not discover WLC. Either IP address is not assigned or assigned IP is wrong. Renewing DHCP IP.
+    %LWAPP-3-LWAPP_INTERFACE_GOT_IP_ADDRESS: Interface BVI1 obtained IP from DHCP...
+    %DHCP-6-ADDRESS_ASSIGN: Interface BVI1 assigned DHCP address 10.25.0.134, mask 255.255.255.0, hostname 18b-ve5-ap04
+
+WLCからAPに向けてpingが届くか確認する。Webインターフェイスの右上からpingコマンドを実行できる。
+pingが届かない場合、APへのrouteが無いことがわかる。
+
+ただし、WLCのManagement設定にstatic routeを記述しようとすると、「gateway need to be on service port subnet」というエラーが出る。
+このエラーが出た時の環境は、会場が2Fと5Fの2つに分かれている会場で、各フロアのAPをそれぞれ別のmgmtネットワークにて管理しjoinさせる構成だった。
+(1フロア分のmgmtネットワークについては疎通、2フロア目のmgmtネットワークについては不通という状態であった。)
+
+この場合、おそらく現在のバージョンのWLCの仕様と思われるが、同一インターフェイス上で2つのmgmtネットワークについて通信させる場合に、static routeを設定するために必要とされている"service port"というものの追加設定ができない。
+回避する方法として、VPCルータを1hop挟むことになるが、VPCルータ上に2つの会場向けのstatic routeを記述し、WLCのdefault gatewayはVPCルータに向けることで事象が解決した。
+
