@@ -60,7 +60,7 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 
 ![Press any keyの画面](images/image01.png)
 
-## <a name="sakura_cloud"> さくらのクラウド </a>
+### <a name="sakura_cloud"> さくらのクラウド </a>
 
 さくらのクラウドの場合、ovaファイルを利用するのではなくisoイメージからvwlcを作成します。isoイメージはCisco公式から落とすことができます。（要：Ciscoの会員登録）2017/03現在 [WLCダウンロード画面](https://software.cisco.com/download/type.html?mdfid=284464214&i=rm)
 ここから必要なisoイメージをダウンロードしておいてください。
