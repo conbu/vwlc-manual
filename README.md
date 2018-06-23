@@ -224,9 +224,8 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 WLC デフォルトライセンスでは、 12台以上の AP(Access Point) を Join することができないため評価版ライセンスを有効化する必要があります。<br>
 また、再起動しないと反映されないため、インストール直後にやるとこを推奨します。
 
-
 1. Web からログインする
-2. MANAGEMENT -> Software Activation -> Licenses
+2. 「MANAGEMENT」 -> Software Activation -> Licenses
 3. ap_count (か何か最初から入っているもの) をクリック、activate にして Set Status ボタンを押す
 4. EULAが表示されるので Accept
 5. Apply
@@ -256,10 +255,32 @@ APをJOINさせるには国コードを合わせる必要があります。国�
 
 ## <a name="vlan_add"> VLAN追加設定 </a>
 
-1. webGUI上部メニューから「CONTROLLER」を選択、左メニューから「Interface」を選択。Interfaceに新規にユーザ用VLANを追加します。Interface名は「user」など汎用的な名称で設定すると使いまわしがききます。
-2. ユーザ用VLAN番号はイベント指定の番号を追加。CONBUでは典型的には VLAN 3001 を利用。
+### 前提条件
+
+CONBU では、Flexconnect Mode を利用しているため、 IPアドレスは設定上必要なため設定するが、実際は、 VLAN ID の設定ができれば何でも良い。
+
+ドキュメントとして記載するため、また(1.1.1.1で問題になったため)ドキュメントIPアドレスを利用する。
+
+参考までに、 Erlang & Elixir Fest 2018 の設定情報を記載する。
+
+| Floor | Interface Name | VLAN Identifier | IP Address    | Netmask         | Gateway       |
+|:------|:---------------|:----------------|:--------------|:----------------|:--------------|
+| 2F    | venue_2f_mgmt  | 2200            | 192.51.100.1  | 255.255.255.252 | 192.51.100.2  |
+|       | venue_2f_user  | 2216            | 198.51.100.5  | 255.255.255.252 | 192.51.100.6  |
+|||
+| 5F    | venue_5f_mgmt  | 2500            | 192.51.100.33 | 255.255.255.252 | 192.51.100.34 |
+|       | venue_5f_user  | 2516            | 198.51.100.37 | 255.255.255.252 | 192.51.100.37 |
+
+
+
+## VLAN追加設定
+
+1. webGUI上部メニューから「CONTROLLER」を選択、左メニューから「Interfaces」を選択。Interfaceに新規にユーザ用VLANを追加します。
+2. ユーザ用VLAN番号はイベント指定の番号を追加。
 3. 設定項目ではIPアドレス、netmask、Gatewayの割り当てを設定する。
+
 ![](images/image05.png)
+
 
 ## <a name="ssid"> SSIDの設定と注意点 </a>
 ### プロファイルとSSIDの設定
@@ -346,7 +367,7 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ![](images/cleanair_01.png)
 
-1. `Avoid Persistent Non-WiFi Interference` を有効にする<br>
+1. `Avoid Persistent Non-WiFi Interference` を有効にする<br>
       Cisco WLC が継続的な WiFi 以外の干渉を無視できるようにします。
 1. `Event Driven RRM` 項目の `DERRM` を `Enabled` にチェック
 1. `Sensitivity Threshold` は `Medium` 設定<br>
