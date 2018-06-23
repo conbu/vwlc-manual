@@ -125,7 +125,8 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 
 できた仮想マシンを選択し NIC タブから新規NIC を作成し、 管理セグメントの Switchを接続し仮想マシーンを起動する。
 
-## <a name="install-common"> vWLCインストール共通手順 </a>
+## <a name="install-common"> WLCインストール共通手順 </a>
+---
 
 ### 設定値シート
 
@@ -145,7 +146,8 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 | Virtual Gateway IP Address: | Webログイン認証用ダミーIPアドレスCONBUでは利用しないため、ドキュメントIPアドレスを使用<br>例: `203.0.113.1` |
 | Mobility/RF Group Name: | WLCを複数連携する時に必要いなるが、vWLCではHA構成を取れないため適当に設定<br>例: `CONBU01` |
 | Network Name (SSID): | Installer 中で入力が必須のため設定するが、あとで変更することも可能<br>例: `CONBU` |
-|
+| `${現在の日付}` | 時刻設定は後でNTPで設定するが、合わせておく<br>例: `06/23/18`
+| `${現在の時刻}` | 時刻設定は後でNTPで設定するが、合わせておく<br>例: `13:56:00`
 
 
 ### vWLCインストール共通手順
@@ -196,19 +198,18 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 
 
   1. Enable Auto-RF [YES][no]: `yes`
-  2. Configure a NTP server now? [YES][no]: `no`
+  1. Configure a NTP server now? [YES][no]: `no`
       * 後ほど、 WebGUI で設定するのでとりあえず `no`
-  3. Configure the system time now? [YES][no]: `yes`
-  4. Enter the date in MM/DD/YY format: `${現在の日付}`
-  5. Enter the time in HH:MM:SS format: `${現在の時刻}`
+  1. Configure the system time now? [YES][no]: `yes`
+  1. Enter the date in MM/DD/YY format: `${現在の日付}`
+  1. Enter the time in HH:MM:SS format: `${現在の時刻}`
 
 
 
   1. would you like to configure IPv6 parameters [YES][no]: `no`
-      * 9.8からっぽい。とりあえず `no` にした。
-  1. Configureation correct? IF yes, system will save it and reset. [yes][NO]: `yes`
+  2. Configureation correct? IF yes, system will save it and reset. [yes][NO]: `yes`
       * **ここで no を選ぶと次回起動時にクラッシュループするので間違えた場合は ova デプロイからやり直す)**
-  1. 自動的に再起動される
+  3. 自動的に再起動される
 
 
   1. 再起動が完了したらWebブラウザから https://`${マネジメントセグメントのvWLC用IPv4アドレス}` <br>(e.g. https://10.55.255.51 ) にアクセスしてみる
@@ -235,16 +236,20 @@ APをJOINさせるには評価版ライセンスを有効化する必要があ�
 
 ## <a name="country-code"> 国コード設定 </a>
 
-APをJOINさせるには国コードを合わせる必要があります。国コードを変更するには一度インターフェイスをダウンさせる必要があるため、以下の手順を実施します。
+APをJOINさせるには国コードを合わせる必要があります。国コードを変更するには一度無線を停波しないとできないため、ここで実施する。<br>また、 <a name="install-common"> WLCインストール共通手順 </a> で実施しているため確認になる。
 
-1. webGUI上部メニューから「WIRELESS」を選択し、次に左メニューから802.11a/n/acをプルダウンし、「Network」を選択する。
-2. Generalの項目の802.11a Network Statusの「Enabled」チェックボックスを外し、無効化します。外したら右上の「Apply」をクリックして設定適用してください。
+
+1. webGUI上部メニューから「WIRELESS」を選択し、次に左メニューから `802.11a/n/ac` をプルダウンし、「Network」を選択する。
+
+2. Generalの項目の `802.11a Network Status` の「Enabled」チェックボックスを外し、無効化します。外したら右上の「`Apply`」をクリックして設定適用してください。
 ![](images/image03.png)
-1. 手順2.と同じ手順を802.11b/g/nの「Network」で実施し、無効化します。
-2. 左メニューから「Contry」の項目を選択し、国コードを設定します。J2,J4の両方を選択してください。選択したら右上の「Apply」をクリックして設定適用します。
-![](images/image02.png)
-1. 手順2.手順3で無効化したインターフェイスを有効化します。
 
+1. 手順2.と同じ手順を `802.11b/g/n` の「Network」で実施し、無効化します。
+
+1. 左メニューから「Contry」の項目を選択し、国コードを設定します。 **J2,J4** の両方を選択してください。選択したら右上の「`Apply`」をクリックして設定適用します。
+![](images/image02.png)
+
+1. 手順2.手順3で無効化したインターフェイスを有効化します。
 
 
 ## <a name="vlan_add"> VLAN追加設定 </a>
@@ -272,7 +277,7 @@ APをJOINさせるには国コードを合わせる必要があります。国�
 ![](images/image07.png)
 
 
-SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurityタブ > Layer2　タブ内の下部にある。
+SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurityタブ > Layer2 タブ内の下部にある。
 
 ![](images/image06.png)
 
@@ -289,7 +294,7 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 ![](images/wlan01.png)
 
 - 「DHCP Addr. Assignment」の Required の項目にチェックが入ってないことを確認する。
-　(有効になっているとIPv6のRAを妨げてしまうため)
+(有効になっているとIPv6のRAを妨げてしまうため)
 
 ![](images/image08.png)
 
@@ -316,8 +321,8 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 
 ## <a name="power"> APの電波出力の確認 </a>
 
-　- APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
-  - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
+  - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+    - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
 
 ![](images/power01.png)
 
