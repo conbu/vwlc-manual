@@ -23,7 +23,8 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
   - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
   - [無線LANクライアントの接続が頻繁に切れる場合](#client_load_balancing)
   - [各APのLoadProfileステータスがFailedになる](#loadprofile_failed)
-  - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
+  - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
+  - [WLCとAPとの接続に不具合が見受けられる場合](#client_load_balancing)
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
@@ -36,9 +37,9 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 
 ## <a name="vwlc_env"> 動作環境ごとのインストール手順 </a>
 
-## <a name="vwlc_env_vmware"> VMware ESXi </a>
+### <a name="vwlc_env_vmware"> VMware ESXi </a>
 
-VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用いてインストール作業をします。
+VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用いてインストール作業をします。
 
 手順はシンプルですが、対話式初期設定がスキップできなかったり、（バグのため）少しのミスで再インストールからやり直すことになったり、タイミング良くキーを押せないと再インストールからやり直しになったりします……。
 
