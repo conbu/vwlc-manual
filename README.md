@@ -221,7 +221,9 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 
 ## <a name="license"> ライセンス </a>
 
-APをJOINさせるには評価版ライセンスを有効化する必要があります。
+WLC デフォルトライセンスでは、 12台以上の AP(Access Point) を Join することができないため評価版ライセンスを有効化する必要があります。<br>
+また、再起動しないと反映されないため、インストール直後にやるとこを推奨します。
+
 
 1. Web からログインする
 2. MANAGEMENT -> Software Activation -> Licenses
