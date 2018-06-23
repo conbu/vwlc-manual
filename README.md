@@ -1,5 +1,5 @@
-CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュアル
-====
+# CONBU イベント無線LAN環境向け<br> Cisco vWLC セットアップマニュアル
+---
 
 - [参考リンク・資料](#reference)
 - [前提とする環境](#requirements)
@@ -26,6 +26,7 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
   - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
   - [WLCとAPとの接続に不具合が見受けられる場合](#client_load_balancing)
 
+
 ## <a name="reference"> 参考リンク・資料 </a>
 
 
@@ -36,6 +37,7 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 * 複数台の AP(Cisco Aironet) 配置する構成を取る場合。
 
 ## <a name="vwlc_env"> 動作環境ごとのインストール手順 </a>
+---
 
 ### <a name="vwlc_env_vmware"> VMware ESXi </a>
 
@@ -125,38 +127,59 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 
 ## <a name="install-common"> vWLCインストール共通手順 </a>
 
+### 設定値シート
+
+参考値を記載する。
+
+| | Description |
+|:-|:-|
+| `ホスト名`         | ホスト名<br>例: `18b-cc-vwlc01` |
+| `${共通ユーザ名}`  | Projectユーザー名<br>例: `mekabu` |
+| `${共通パスワード}` | Project パスワード<br>例; `conbu` |
+| Service Interface IP Address: | 設定しないと進めないため、ドキュメントIPアドレスを利用 |
+| Service Interface Netmask:     | 設定しないと進めないため、 /30 設定 |
+| `${マネジメントセグメントIPv4アドレス}` | 例: `10.20.0.21` |
+| `${マネジメントセグメントのネットマスク}` | 例: `255.255.255.0` |
+| `${マネジメントセグメントのゲートウェイアドレス}` | 例: `10.20.0.4` |
+| `${マネジメントセグメントの適当なアドレス}` | 設定しないと進めないため、設定<br>WLC前後のアドレスを利用するとわかりやすい<br>あとで `0.0.0.0` に変更する<br> 例: `10.20.0.22` |
+| Virtual Gateway IP Address: | Webログイン認証用ダミーIPアドレスCONBUでは利用しないため、ドキュメントIPアドレスを使用<br>例: `203.0.113.1` |
+| Mobility/RF Group Name: | WLCを複数連携する時に必要いなるが、vWLCではHA構成を取れないため適当に設定<br>例: `CONBU01` |
+| Network Name (SSID): | Installer 中で入力が必須のため設定するが、あとで変更することも可能<br>例: `CONBU` |
+|
+
+
+### vWLCインストール共通手順
 
   これ以降は対話インストールを行う。入力を間違えたら "-" で戻れると表示があるが、バグのため実際には壊れてしまい、次回起動時にクラッシュループするようになるので、- は使えない。間違えたら ova デプロイやインストールをやり直す。
 
   1. Would you like to terminate autoinstall? [yes]: `yes`
       * **これを早めに入力しないと autoinstall が勝手に走ってしまう!**
-  1. System Name はそのままでOK
-      * SNMP などの設定であとから変更する場合もあるかもしれないのでホスト名にすると良い
+  2. System Name [Cisco_07:fc:3e] (31 characters max): `ホスト名`
 
 
-  1. Enter Administrative User Name: `${ここに共通ユーザ名}`
-  1. Enter Administrative Password: `${ここに共通パスワード}`
-      * おそらくキーボードがUS配列になっているので、JISキーボードを使って @ を入力する際は別の記号として入力されるかもしれない。わからなくならなければWeb画面から変更できるので大丈夫
+  1. Enter Administrative User Name: `${共通ユーザ名}`
+  2. Enter Administrative Password: `${共通パスワード}`
+      * キーボードがUS配列になっているので、JISキーボードを使って `@` を入力する際は別の記号として入力されるかもしれない。<br>わからなくならなければWeb画面から変更できるので大丈夫
 
 
   1. Service Interface IP Address Configration [static][DHCP]: `static`
-      * **このインタフェイスは使わない**<br> が、NICを同一ネットワークに刺してると問題になる可能性があるため static で設定する。
+      * **このインタフェイスは使わない** が、NICを同一ネットワークに刺してると問題になる可能性があるため `static` で設定する。
   1. Service Interface IP Address: `192.0.2.1`
   1. Service Interface Netmask: `255.255.255.252`
 
 
-  1. Management Interface IP Address: `${マネジメントセグメントのvWLC用IPv4アドレス}`
+  1. Management Interface IP Address: `${マネジメントセグメントIPv4アドレス}`
       * このインタフェイスに AP が JOIN する。Web / CLI もここ
   1. Management Interface Netmask: `${マネジメントセグメントのネットマスク}`
   1. Management Interface Default Router: `${マネジメントセグメントのゲートウェイアドレス}`
   1. Management Interface VLAN Identifier (0 = untagged): `0`
   1. Management Interface Port Num [1 to 1]: `1`
-  1. Management Interface DHCP Server IP Address: `${適当なアドレス}`
-      * **使わない**<br> Management Interface と同じ、ネットワーク内のアドレスを適当にアサインする。
+  1. Management Interface DHCP Server IP Address: `${マネジメントセグメントの適当なアドレス}`
+      * **使わない** `Management Interface` と同じ、ネットワーク内のアドレスを適当にアサインする。
 
 
-  1. Virtual Gateway IP Address: `192.0.2.5`
-      * Webログイン認証用ダミー IPアドレス。使わない
+  1. Virtual Gateway IP Address: `203.0.113.1`
+      * Webログイン認証用ダミー IPアドレス。
 
 
   1. Mobility/RF Group Name: `CONBU01`
@@ -172,20 +195,12 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
       * P型番の AP は `J2` <br>Q型番の AP は `J4`
 
 
-  1. Enable 802.11b Network [YES][no]: `no`
-      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
-  1. Enable 802.11a Network [YES][no]: `no`
-      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
-  1. Enable 802.11g Network [YES][no]: `no`
-      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
   1. Enable Auto-RF [YES][no]: `yes`
-
-
-  1. Configure a NTP server now? [YES][no]: `no`
+  2. Configure a NTP server now? [YES][no]: `no`
       * 後ほど、 WebGUI で設定するのでとりあえず `no`
-  1. Configure the system time now? [YES][no]: `yes`
-  1. Enter the date in MM/DD/YY format: `${現在の日付}`
-  1. Enter the time in HH:MM:SS format: `${現在の時刻}`
+  3. Configure the system time now? [YES][no]: `yes`
+  4. Enter the date in MM/DD/YY format: `${現在の日付}`
+  5. Enter the time in HH:MM:SS format: `${現在の時刻}`
 
 
 
