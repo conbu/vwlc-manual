@@ -10,6 +10,7 @@
 - [ライセンス](#license)
 - [国コード](#country_code)
 - [VLAN追加設定](#vlan_add)
+- [Tx Power Control(TPC) version の設定](#tpc_version)
 - [SSIDの設定と注意点](#ssid)
 - [IPv6のサポート/非サポート](#ipv6)
 - [CleanAirの有効化](#cleanair)
@@ -280,6 +281,25 @@ CONBU では、Flexconnect Mode を利用しているため、 IPアドレスは
 3. 設定項目ではIPアドレス、netmask、Gatewayの割り当てを設定する。
 
 ![](images/image05.png)
+
+
+## <a name="tpc_version">Tx Power Control(TPC) version の設定</a>
+
+カンファレンスネットワークは一部屋に多くの Client (150-200)を接続する環境のため、 TPC の設定を最適化しておく。
+
+
+* [Cisco Wireless LAN Controller コンフィギュレーション ガイド リリース 8.0 - RRM の設定 [Cisco Wireless LAN Controller ソフトウェア] - Cisco](https://www.cisco.com/c/ja_jp/td/docs/wl/wllancntrller/wllancntrllersw/cg/001/b_cg80/b_cg80_chapter_010000011.html)
+
+| version | Description |
+|---------|-------------|
+| `TPCv1` | 通常電力を低く維持することでキャパシティを増やし、干渉を減らします。<br>Cisco WLC は、3番目に送信電力の強いネイバーによるアクセス ポイントの認識に応じて、アクセス ポイントの送信電力の調整を試行します。|
+| `TPCv2` | 高密度のネットワークに適しています。<br>このモードでは、ローミングの遅延およびカバレッジ ホールのインシデントが多く発生する可能性があります。|
+
+1. 「WIRELESS」=> 「802.11a/n/ac」=> 「RRM」=>「TPC」
+1. Interference Optimal Mode (TPCv2) に変更
+2. 同様に、「802.11b/g/n」も実施する
+
+![](images/tpc/tpc_01.png)
 
 
 ## <a name="ssid"> SSIDの設定と注意点 </a>
