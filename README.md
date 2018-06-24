@@ -1,5 +1,4 @@
 # CONBU イベント無線LAN環境向け<br> Cisco vWLC セットアップマニュアル
----
 
 - [参考リンク・資料](#reference)
 - [前提とする環境](#requirements)
@@ -30,7 +29,6 @@
 
 ## <a name="reference"> 参考リンク・資料 </a>
 
-
 - [Cisco Virtual Wireless Controller 導入ガイド](https://www.google.com/url?q=http://www.cisco.com/cisco/web/support/JP/111/1116/1116689_virtual-wlan-dg-00.html&sa=D&ust=1487673384885000&usg=AFQjCNGohhxbRNW2BpE4J4bU9vF0XSYuyQ)
 
 ## <a name="requirements"> 前提とする環境</a>
@@ -38,7 +36,7 @@
 * 複数台の AP(Cisco Aironet) 配置する構成を取る場合。
 
 ## <a name="vwlc_env"> 動作環境ごとのインストール手順 </a>
----
+
 
 ### <a name="vwlc_env_vmware"> VMware ESXi </a>
 
@@ -127,7 +125,6 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用い�
 できた仮想マシンを選択し NIC タブから新規NIC を作成し、 管理セグメントの Switchを接続し仮想マシーンを起動する。
 
 ## <a name="install-common"> WLCインストール共通手順 </a>
----
 
 ### 設定値シート
 
@@ -517,9 +514,8 @@ reload
 また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
 (通常だと、`AP:aaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
 
-
-
 再起動後に `capwap ap controller ip address` をやり直します。
+
 
 ## <a name="ap_join"> APのJOIN </a>
 
