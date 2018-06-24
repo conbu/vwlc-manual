@@ -517,25 +517,20 @@ reload
 また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
 (通常だと、`AP:aaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
 
+
+
 再起動後に `capwap ap controller ip address` をやり直します。
-
-```
-ap: delete flash:private-multiple-fs
-ap: reset
-```
-
-再起動後に"capwap ap controller ip address"をやり直します。
 
 ## <a name="ap_join"> APのJOIN </a>
 
 AP の Join 方法は二通りあります
 
-* DHCP による IPアドレス 取得と join
+* DHCP による IPアドレス 取得と Join
 * APに静的アドレスを指定する方法
 
-CONBU では、 `DHCP による IPアドレス 取得と join` を推奨します。
+CONBU では、 `DHCP による IPアドレス 取得と Join` を推奨します。
 
-DHCP による IPアドレス 取得と join の方法を記載します。
+DHCP による IPアドレス 取得と Join の方法を記載します。
 
 ```
 capwap ap hostname <AP Name>
@@ -551,7 +546,6 @@ capwap ap controller ip address 10.255.255.51
 
 このコマンドは write の必要はありません。
 このAPから controller への疎通があれば JOIN しようとするはずです。
-AP名はWLC上から変更します。
 
 
 ## <a name="wlc_ap_conf"> APのWLC上の設定 </a>
