@@ -1,5 +1,4 @@
-CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュアル
-====
+# CONBU イベント無線LAN環境向け<br> Cisco vWLC セットアップマニュアル
 
 - [参考リンク・資料](#reference)
 - [前提とする環境](#requirements)
@@ -10,9 +9,10 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 - [ライセンス](#license)
 - [国コード](#country_code)
 - [VLAN追加設定](#vlan_add)
+- [Tx Power Control(TPC) version の設定](#tpc_version)
 - [SSIDの設定と注意点](#ssid)
 - [IPv6のサポート/非サポート](#ipv6)
-- [CleanAirの有効化](#cleanair)
+- [CleanAir の有効化](#cleanair)
 - [NTP設定](#ntp)
 - [APの証明書クリア手順](#ap_cert_clear)
 - [APのWLC上の設定](#wlc_ap_conf)
@@ -23,10 +23,11 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
   - [VLANが混ざる その2](#flexconnect_vlan_mix_2)
   - [無線LANクライアントの接続が頻繁に切れる場合](#client_load_balancing)
   - [各APのLoadProfileステータスがFailedになる](#loadprofile_failed)
-  - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
+  - [無線LANからWLCのGUIにアクセスできない場合](#management_via_wireless)
+  - [WLCとAPとの接続に不具合が見受けられる場合](#client_load_balancing)
+
 
 ## <a name="reference"> 参考リンク・資料 </a>
-
 
 - [Cisco Virtual Wireless Controller 導入ガイド](https://www.google.com/url?q=http://www.cisco.com/cisco/web/support/JP/111/1116/1116689_virtual-wlan-dg-00.html&sa=D&ust=1487673384885000&usg=AFQjCNGohhxbRNW2BpE4J4bU9vF0XSYuyQ)
 
@@ -36,9 +37,10 @@ CONBU イベント無線LAN環境向け Cisco vWLC セットアップマニュ�
 
 ## <a name="vwlc_env"> 動作環境ごとのインストール手順 </a>
 
-## <a name="vwlc_env_vmware"> VMware ESXi </a>
 
-VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用いてインストール作業をします。
+### <a name="vwlc_env_vmware"> VMware ESXi </a>
+
+VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-152-0.ova)を用いてインストール作業をします。
 
 手順はシンプルですが、対話式初期設定がスキップできなかったり、（バグのため）少しのミスで再インストールからやり直すことになったり、タイミング良くキーを押せないと再インストールからやり直しになったりします……。
 
@@ -59,7 +61,7 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 
 ![Press any keyの画面](images/image01.png)
 
-## <a name="sakura_cloud"> さくらのクラウド </a>
+### <a name="sakura_cloud"> さくらのクラウド </a>
 
 さくらのクラウドの場合、ovaファイルを利用するのではなくisoイメージからvwlcを作成します。isoイメージはCisco公式から落とすことができます。（要：Ciscoの会員登録）2017/03現在 [WLCダウンロード画面](https://software.cisco.com/download/type.html?mdfid=284464214&i=rm)
 ここから必要なisoイメージをダウンロードしておいてください。
@@ -122,40 +124,62 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 
 できた仮想マシンを選択し NIC タブから新規NIC を作成し、 管理セグメントの Switchを接続し仮想マシーンを起動する。
 
-## <a name="install-common"> vWLCインストール共通手順 </a>
+## <a name="install-common"> WLCインストール共通手順 </a>
 
+### 設定値シート
+
+参考値を記載する。
+
+| | Description |
+|:-|:-|
+| `ホスト名`         | ホスト名<br>例: `18b-cc-vwlc01` |
+| `${共通ユーザ名}`  | Projectユーザー名<br>例: `mekabu` |
+| `${共通パスワード}` | Project パスワード<br>例; `conbu` |
+| Service Interface IP Address: | 設定しないと進めないため、ドキュメントIPアドレスを利用 |
+| Service Interface Netmask:     | 設定しないと進めないため、 /30 設定 |
+| `${マネジメントセグメントIPv4アドレス}` | 例: `10.20.0.21` |
+| `${マネジメントセグメントのネットマスク}` | 例: `255.255.255.0` |
+| `${マネジメントセグメントのゲートウェイアドレス}` | 例: `10.20.0.4` |
+| `${マネジメントセグメントの適当なアドレス}` | 設定しないと進めないため、設定<br>WLC前後のアドレスを利用するとわかりやすい<br>あとで `0.0.0.0` に変更する<br> 例: `10.20.0.22` |
+| Virtual Gateway IP Address: | Webログイン認証用ダミーIPアドレスCONBUでは利用しないため、ドキュメントIPアドレスを使用<br>例: `203.0.113.1` |
+| Mobility/RF Group Name: | WLCを複数連携する時に必要いなるが、vWLCではHA構成を取れないため適当に設定<br>例: `CONBU01` |
+| Network Name (SSID): | Installer 中で入力が必須のため設定するが、あとで変更することも可能<br>例: `CONBU` |
+| `${現在の日付}` | 時刻設定は後でNTPで設定するが、合わせておく<br>例: `06/23/18`
+| `${現在の時刻}` | 時刻設定は後でNTPで設定するが、合わせておく<br>例: `13:56:00`
+
+
+### vWLCインストール共通手順
 
   これ以降は対話インストールを行う。入力を間違えたら "-" で戻れると表示があるが、バグのため実際には壊れてしまい、次回起動時にクラッシュループするようになるので、- は使えない。間違えたら ova デプロイやインストールをやり直す。
 
   1. Would you like to terminate autoinstall? [yes]: `yes`
       * **これを早めに入力しないと autoinstall が勝手に走ってしまう!**
-  1. System Name はそのままでOK
-      * SNMP などの設定であとから変更する場合もあるかもしれないのでホスト名にすると良い
+  2. System Name [Cisco_07:fc:3e] (31 characters max): `ホスト名`
 
 
-  1. Enter Administrative User Name: `${ここに共通ユーザ名}`
-  1. Enter Administrative Password: `${ここに共通パスワード}`
-      * おそらくキーボードがUS配列になっているので、JISキーボードを使って @ を入力する際は別の記号として入力されるかもしれない。わからなくならなければWeb画面から変更できるので大丈夫
+  1. Enter Administrative User Name: `${共通ユーザ名}`
+  2. Enter Administrative Password: `${共通パスワード}`
+      * キーボードがUS配列になっているので、JISキーボードを使って `@` を入力する際は別の記号として入力されるかもしれない。<br>わからなくならなければWeb画面から変更できるので大丈夫
 
 
   1. Service Interface IP Address Configration [static][DHCP]: `static`
-      * **このインタフェイスは使わない**<br> が、NICを同一ネットワークに刺してると問題になる可能性があるため static で設定する。
+      * **このインタフェイスは使わない** が、NICを同一ネットワークに刺してると問題になる可能性があるため `static` で設定する。
   1. Service Interface IP Address: `192.0.2.1`
   1. Service Interface Netmask: `255.255.255.252`
 
 
-  1. Management Interface IP Address: `${マネジメントセグメントのvWLC用IPv4アドレス}`
+  1. Management Interface IP Address: `${マネジメントセグメントIPv4アドレス}`
       * このインタフェイスに AP が JOIN する。Web / CLI もここ
   1. Management Interface Netmask: `${マネジメントセグメントのネットマスク}`
   1. Management Interface Default Router: `${マネジメントセグメントのゲートウェイアドレス}`
   1. Management Interface VLAN Identifier (0 = untagged): `0`
   1. Management Interface Port Num [1 to 1]: `1`
-  1. Management Interface DHCP Server IP Address: `${適当なアドレス}`
-      * **使わない**<br> Management Interface と同じ、ネットワーク内のアドレスを適当にアサインする。
+  1. Management Interface DHCP Server IP Address: `${マネジメントセグメントの適当なアドレス}`
+      * **使わない** `Management Interface` と同じ、ネットワーク内のアドレスを適当にアサインする。
 
 
-  1. Virtual Gateway IP Address: `192.0.2.5`
-      * Webログイン認証用ダミー IPアドレス。使わない
+  1. Virtual Gateway IP Address: `203.0.113.1`
+      * Webログイン認証用ダミー IPアドレス。
 
 
   1. Mobility/RF Group Name: `CONBU01`
@@ -171,15 +195,7 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
       * P型番の AP は `J2` <br>Q型番の AP は `J4`
 
 
-  1. Enable 802.11b Network [YES][no]: `no`
-      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
-  1. Enable 802.11a Network [YES][no]: `no`
-      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
-  1. Enable 802.11g Network [YES][no]: `no`
-      * Data Rate や MCS Settings の設定を Global でするのでひとまず、 `no`
   1. Enable Auto-RF [YES][no]: `yes`
-
-
   1. Configure a NTP server now? [YES][no]: `no`
       * 後ほど、 WebGUI で設定するのでとりあえず `no`
   1. Configure the system time now? [YES][no]: `yes`
@@ -189,10 +205,9 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 
 
   1. would you like to configure IPv6 parameters [YES][no]: `no`
-      * 9.8からっぽい。とりあえず `no` にした。
-  1. Configureation correct? IF yes, system will save it and reset. [yes][NO]: `yes`
+  2. Configureation correct? IF yes, system will save it and reset. [yes][NO]: `yes`
       * **ここで no を選ぶと次回起動時にクラッシュループするので間違えた場合は ova デプロイからやり直す)**
-  1. 自動的に再起動される
+  3. 自動的に再起動される
 
 
   1. 再起動が完了したらWebブラウザから https://`${マネジメントセグメントのvWLC用IPv4アドレス}` <br>(e.g. https://10.55.255.51 ) にアクセスしてみる
@@ -204,10 +219,11 @@ VMware ESXi向けにはovaファイル(例: AIR-CTVM-K9-8-0-120-0.ova)を用い�
 
 ## <a name="license"> ライセンス </a>
 
-APをJOINさせるには評価版ライセンスを有効化する必要があります。
+WLC デフォルトライセンスでは、 12台以上の AP(Access Point) を Join することができないため評価版ライセンスを有効化する必要があります。<br>
+また、再起動しないと反映されないため、インストール直後にやるとこを推奨します。
 
 1. Web からログインする
-2. MANAGEMENT -> Software Activation -> Licenses
+2. 「MANAGEMENT」 -> Software Activation -> Licenses
 3. ap_count (か何か最初から入っているもの) をクリック、activate にして Set Status ボタンを押す
 4. EULAが表示されるので Accept
 5. Apply
@@ -219,33 +235,97 @@ APをJOINさせるには評価版ライセンスを有効化する必要があ�
 
 ## <a name="country-code"> 国コード設定 </a>
 
-APをJOINさせるには国コードを合わせる必要があります。国コードを変更するには一度インターフェイスをダウンさせる必要があるため、以下の手順を実施します。
+APをJOINさせるには国コードを合わせる必要があります。国コードを変更するには一度無線を停波しないとできないため、ここで実施する。<br>また、 <a name="install-common"> WLCインストール共通手順 </a> で実施しているため確認になる。
 
-1. webGUI上部メニューから「WIRELESS」を選択し、次に左メニューから802.11a/n/acをプルダウンし、「Network」を選択する。
-2. Generalの項目の802.11a Network Statusの「Enabled」チェックボックスを外し、無効化します。外したら右上の「Apply」をクリックして設定適用してください。
+
+1. webGUI上部メニューから「WIRELESS」を選択し、次に左メニューから `802.11a/n/ac` をプルダウンし、「Network」を選択する。
+
+2. Generalの項目の `802.11a Network Status` の「Enabled」チェックボックスを外し、無効化します。外したら右上の「`Apply`」をクリックして設定適用してください。
 ![](images/image03.png)
-1. 手順2.と同じ手順を802.11b/g/nの「Network」で実施し、無効化します。
-2. 左メニューから「Contry」の項目を選択し、国コードを設定します。J2,J4の両方を選択してください。選択したら右上の「Apply」をクリックして設定適用します。
-![](images/image02.png)
-1. 手順2.手順3で無効化したインターフェイスを有効化します。
 
+1. 手順2.と同じ手順を `802.11b/g/n` の「Network」で実施し、無効化します。
+
+1. 左メニューから「Contry」の項目を選択し、国コードを設定します。 **J2,J4** の両方を選択してください。選択したら右上の「`Apply`」をクリックして設定適用します。
+![](images/image02.png)
+
+1. 手順2.手順3で無効化したインターフェイスを有効化します。
 
 
 ## <a name="vlan_add"> VLAN追加設定 </a>
 
-1. webGUI上部メニューから「CONTROLLER」を選択、左メニューから「Interface」を選択。Interfaceに新規にユーザ用VLANを追加します。Interface名は「user」など汎用的な名称で設定すると使いまわしがききます。
-2. ユーザ用VLAN番号はイベント指定の番号を追加。CONBUでは典型的には VLAN 3001 を利用。
+### 前提条件
+
+CONBU では、Flexconnect Mode を利用しているため、 IPアドレスは設定上必要なため設定するが、実際は、 VLAN ID の設定ができれば何でも良い。
+
+ドキュメントとして記載するため、また(1.1.1.1で問題になったため)ドキュメントIPアドレスを利用する。
+
+参考までに、 Erlang & Elixir Fest 2018 の設定情報を記載する。
+
+| Floor | Interface Name | VLAN Identifier | IP Address    | Netmask         | Gateway       |
+|:------|:---------------|:----------------|:--------------|:----------------|:--------------|
+| 2F    | venue_2f_mgmt  | 2200            | 192.51.100.1  | 255.255.255.252 | 192.51.100.2  |
+|       | venue_2f_user  | 2216            | 198.51.100.5  | 255.255.255.252 | 192.51.100.6  |
+|||
+| 5F    | venue_5f_mgmt  | 2500            | 192.51.100.33 | 255.255.255.252 | 192.51.100.34 |
+|       | venue_5f_user  | 2516            | 198.51.100.37 | 255.255.255.252 | 192.51.100.37 |
+
+
+
+## VLAN追加設定
+
+1. webGUI上部メニューから「CONTROLLER」を選択、左メニューから「Interfaces」を選択。Interfaceに新規にユーザ用VLANを追加します。
+2. ユーザ用VLAN番号はイベント指定の番号を追加。
 3. 設定項目ではIPアドレス、netmask、Gatewayの割り当てを設定する。
+
 ![](images/image05.png)
 
+
+## <a name="tpc_version">Tx Power Control(TPC) version の設定</a>
+
+カンファレンスネットワークは一部屋に多くの Client (150-200)を接続する環境のため、 TPC の設定を最適化しておく。
+
+
+* [Cisco Wireless LAN Controller コンフィギュレーション ガイド リリース 8.0 - RRM の設定 [Cisco Wireless LAN Controller ソフトウェア] - Cisco](https://www.cisco.com/c/ja_jp/td/docs/wl/wllancntrller/wllancntrllersw/cg/001/b_cg80/b_cg80_chapter_010000011.html)
+
+| version | Description |
+|---------|-------------|
+| `TPCv1` | 通常電力を低く維持することでキャパシティを増やし、干渉を減らします。<br>Cisco WLC は、3番目に送信電力の強いネイバーによるアクセス ポイントの認識に応じて、アクセス ポイントの送信電力の調整を試行します。|
+| `TPCv2` | 高密度のネットワークに適しています。<br>このモードでは、ローミングの遅延およびカバレッジ ホールのインシデントが多く発生する可能性があります。|
+
+1. 「WIRELESS」=> 「802.11a/n/ac」=> 「RRM」=>「TPC」
+1. Interference Optimal Mode (TPCv2) に変更
+2. 同様に、「802.11b/g/n」も実施する
+
+![](images/tpc/tpc_01.png)
+
+
 ## <a name="ssid"> SSIDの設定と注意点 </a>
+
+### 設計思想
+
+WLAN ID は `1` は デフォルトでCLI設定時に作成されるので `1-9` を利用しないようにした。
+それから、`11-512` まで利用可能。
+
+階ごとに、WLANを作成することもあるため階ごとに10の位を分けるのがオススメ。
+また、mgmtは最初に作成使用するため、 `x1` で作成するのがオススメ。
+
+
+
+| Floor | WLAN ID | Profile Name | WLAN SSID   |
+|:------|:--------|:-------------|:------------|
+| 2F    | 11      | conbu-staff  | conbu-staff |
+|       | 12      | user-wifi    | user-wifi   |
+|||
+| 5F    | 21      | conbu-staff  | conbu-staff |
+|       | 22      | user-wifi    | user-wifi   |
+
+
 ### プロファイルとSSIDの設定
 
 
 プロファイルを変更し、対象イベント用に設定する。
-- WebGUI上部メニューからWLANs > 左メニューから「WLANs 」を選択。
-  - SSIDを変更することが可能になったので、プロファイル新規作成をするときに、プロファイルを次回イベント時に使いまわせるようにプロファイル名は統一したい。
-  - ユーザ用は「CONBU-wifi-User」とか。
+- WebGUI上部メニューからWLANs > 左メニューから「WLANs」を選択。
+
 
 作成したプロファイルはSSIDに紐づける必要がある。 WebGUI上部メニューから「WLANs」を選択し、SSIDを作成もしくは編集する。
 
@@ -256,7 +336,7 @@ APをJOINさせるには国コードを合わせる必要があります。国�
 ![](images/image07.png)
 
 
-SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurityタブ > Layer2　タブ内の下部にある。
+SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurityタブ > Layer2 タブ内の下部にある。
 
 ![](images/image06.png)
 
@@ -273,7 +353,7 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 ![](images/wlan01.png)
 
 - 「DHCP Addr. Assignment」の Required の項目にチェックが入ってないことを確認する。
-　(有効になっているとIPv6のRAを妨げてしまうため)
+(有効になっているとIPv6のRAを妨げてしまうため)
 
 ![](images/image08.png)
 
@@ -283,9 +363,40 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 - 「Clinent Band Select」の項目は2.4GHz/5GHz両方からSSIDを提供するときに、5GHz(802.11a)に優先して接続する設定なので、SSIDの設定状況に応じて選択する。
   - 2.4GHzと5GHzとでSSIDを分けた場合は不要、それ以外の場合は基本的に有効にしておくこと
 
-## <a name="rfprofile"> RF profile設定によるクライアント接続帯域の設定 </a>
+## <a name="rfprofile"> RF Profile 設定によるクライアント接続帯域の設定 </a>
+
+### 設計思想
 
 低帯域のbitrateでクライアントが接続すると、そのクライアントがボトルネックとなり、Wifi全体が遅くなるため、低bitrateのクライアント接続を絞る。
+設定のステータスには3種類あり、それぞれの説明は以下になる。
+
+
+Clientが接続するさいに接続される bitrate の下限値が `Mandatory` でありサポートしていれば、 `Supported` までの bitrate で接続する。
+
+
+|||
+|:-|:-|
+| `Disabled`  | 通信に使用するデータレートは、クライアントが指定します。|
+| `Mandatory` | クライアントは、このコントローラ上のアクセスポイントにアソシエートするにはこのデータレートをサポートしている必要があります。|
+| `Supported`  | アソシエートしたクライアントは、このデータレートをサポートしていれば、このレートを使用してアクセス ポイントと通信することができます。 ただし、クライアントがこのレートを使用できなくても、アソシエートは可能です。|
+
+
+最近のCONBUでは下記の設定をしている
+
+* RF-Low:
+    * `disable`: 1, 2, 5.5, 6, 9, 11, 12, 18
+    * `mandatory`: 24, 36
+    * `supported`: 48, 54
+
+* RF-High:
+    * `disable`: 1, 2, 5.5, 6, 9, 11, 12, 18, 24
+    * `mandatory`: 36,
+    * `supported`: 48, 54
+
+参考: [Cisco Aironet 3600 シリーズ アクセス ポイント - Cisco](https://www.cisco.com/c/ja_jp/products/collateral/wireless/aironet-3600-series/data_sheet_c78-686782.html)
+
+### クライアント接続帯域の設定
+
 上部メニュー「WIRELESS」から左メニューで「RF Profile」画面を開き、右上の「New」を選択しProfileを作成する。
 
 ![](images/rfprofile01.png)
@@ -300,8 +411,8 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 
 ## <a name="power"> APの電波出力の確認 </a>
 
-　- APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
-  - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
+  - APのチャンネルと電波出力が固定になっていないか、確認する。(前回利用時に固定設定している場合がある)
+    - 数値は1がMAX、6がMIN、* は自動出力調整で運用されている。必要に応じて出力を下げる。ただし、出力設定変更した場合にはAPは再起動するので、そのAPに接続したユーザは切断されることに注意する。
 
 ![](images/power01.png)
 
@@ -312,7 +423,7 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ![](images/image18.png)
 
-## <a name="cleanair"> CleanAirの有効化 </a>
+## <a name="cleanair"> CleanAir の有効化 </a>
 
 `802.11a/n/ac` と `802.11b/g/n` ともに CleanAir を有効化しておく。
 
@@ -323,7 +434,7 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ![](images/cleanair_01.png)
 
-1. `Avoid Persistent Non-WiFi Interference` を有効にする<br>
+1. `Avoid Persistent Non-WiFi Interference` を有効にする<br>
       Cisco WLC が継続的な WiFi 以外の干渉を無視できるようにします。
 1. `Event Driven RRM` 項目の `DERRM` を `Enabled` にチェック
 1. `Sensitivity Threshold` は `Medium` 設定<br>
@@ -363,26 +474,6 @@ WLCのバージョンにより、`CleanAir Admin Status` が有効でない場�
 
 APへ以下の設定を行います。 AP内に登録されている旧証明書をクリアして新証明書をAPに導入させる必要があります。DHCPの場合はこの手順だけでもOK。
 
-enableモードで以下を実行します。
-
-```
-clear capwap ap ip address
-clear capwap ap ip default-gateway
-clear capwap ap controller ip address
-clear capwap private-config
-```
-
-その後、以下の様にreloadコマンドで再起動させます
-
-```
-reload
-```
-
-再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかる。
-ここに改めて下記の様にvWLCのアドレスを設定します。
-また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
-(通常だと、`APaaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
-
 Cisco デフォルトの `username` と `password` は下記となります
 
 |||
@@ -391,30 +482,51 @@ Cisco デフォルトの `username` と `password` は下記となります
 | password      | Cisco |
 | enable secret | Cisco |
 
-```
-capwap ap hostname <AP Name>
-capwap ap controller ip address 10.255.255.51
-```
 
 なおenableモードに入れない場合、工場出荷状態に初期化する必要があります。AP電源投入直後に"#####"とファームウェアが展開されている時にEscキーを押すことでrommonモードに入ることが出来ます。ここで以下の様に入力して設定を消し飛ばしましょう("ap:"はプロンプトです)。
 
 ```
 ap: delete flash:private-multiple-fs
 ap: reset
+
 ```
 
-再起動後に"capwap ap controller ip address"をやり直します。
+enableモードで以下を実行します。
+
+```
+enable
+clear capwap ap ip address
+clear capwap ap ip default-gateway
+clear capwap ap controller ip address
+clear capwap private-config
+
+```
+
+その後、以下の様にreloadコマンドで再起動させます
+
+```
+reload
+
+```
+
+再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかる。
+ここに改めて下記の様にvWLCのアドレスを設定します。
+また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
+(通常だと、`AP:aaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
+
+再起動後に `capwap ap controller ip address` をやり直します。
+
 
 ## <a name="ap_join"> APのJOIN </a>
 
 AP の Join 方法は二通りあります
 
-* DHCP による IPアドレス 取得と join
+* DHCP による IPアドレス 取得と Join
 * APに静的アドレスを指定する方法
 
-CONBU では、 `DHCP による IPアドレス 取得と join` を推奨します。
+CONBU では、 `DHCP による IPアドレス 取得と Join` を推奨します。
 
-DHCP による IPアドレス 取得と join の方法を記載します。
+DHCP による IPアドレス 取得と Join の方法を記載します。
 
 ```
 capwap ap hostname <AP Name>
@@ -430,7 +542,6 @@ capwap ap controller ip address 10.255.255.51
 
 このコマンドは write の必要はありません。
 このAPから controller への疎通があれば JOIN しようとするはずです。
-AP名はWLC上から変更します。
 
 
 ## <a name="wlc_ap_conf"> APのWLC上の設定 </a>
