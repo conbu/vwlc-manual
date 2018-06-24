@@ -13,7 +13,7 @@
 - [Tx Power Control(TPC) version の設定](#tpc_version)
 - [SSIDの設定と注意点](#ssid)
 - [IPv6のサポート/非サポート](#ipv6)
-- [CleanAirの有効化](#cleanair)
+- [CleanAir の有効化](#cleanair)
 - [NTP設定](#ntp)
 - [APの証明書クリア手順](#ap_cert_clear)
 - [APのWLC上の設定](#wlc_ap_conf)
@@ -426,7 +426,7 @@ IPv6をユーザに提供する場合、RA Guardを外す必要がある。
 
 ![](images/image18.png)
 
-## <a name="cleanair"> CleanAirの有効化 </a>
+## <a name="cleanair"> CleanAir の有効化 </a>
 
 `802.11a/n/ac` と `802.11b/g/n` ともに CleanAir を有効化しておく。
 
