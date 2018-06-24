@@ -477,26 +477,6 @@ WLCのバージョンにより、`CleanAir Admin Status` が有効でない場�
 
 APへ以下の設定を行います。 AP内に登録されている旧証明書をクリアして新証明書をAPに導入させる必要があります。DHCPの場合はこの手順だけでもOK。
 
-enableモードで以下を実行します。
-
-```
-clear capwap ap ip address
-clear capwap ap ip default-gateway
-clear capwap ap controller ip address
-clear capwap private-config
-```
-
-その後、以下の様にreloadコマンドで再起動させます
-
-```
-reload
-```
-
-再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかる。
-ここに改めて下記の様にvWLCのアドレスを設定します。
-また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
-(通常だと、`APaaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
-
 Cisco デフォルトの `username` と `password` は下記となります
 
 |||
@@ -505,12 +485,39 @@ Cisco デフォルトの `username` と `password` は下記となります
 | password      | Cisco |
 | enable secret | Cisco |
 
-```
-capwap ap hostname <AP Name>
-capwap ap controller ip address 10.255.255.51
-```
 
 なおenableモードに入れない場合、工場出荷状態に初期化する必要があります。AP電源投入直後に"#####"とファームウェアが展開されている時にEscキーを押すことでrommonモードに入ることが出来ます。ここで以下の様に入力して設定を消し飛ばしましょう("ap:"はプロンプトです)。
+
+```
+ap: delete flash:private-multiple-fs
+ap: reset
+
+```
+
+enableモードで以下を実行します。
+
+```
+enable
+clear capwap ap ip address
+clear capwap ap ip default-gateway
+clear capwap ap controller ip address
+clear capwap private-config
+
+```
+
+その後、以下の様にreloadコマンドで再起動させます
+
+```
+reload
+
+```
+
+再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかる。
+ここに改めて下記の様にvWLCのアドレスを設定します。
+また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
+(通常だと、`AP:aaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
+
+再起動後に `capwap ap controller ip address` をやり直します。
 
 ```
 ap: delete flash:private-multiple-fs
