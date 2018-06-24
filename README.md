@@ -303,13 +303,32 @@ CONBU では、Flexconnect Mode を利用しているため、 IPアドレスは
 
 
 ## <a name="ssid"> SSIDの設定と注意点 </a>
+
+### 設計思想
+
+WLAN ID は `1` は デフォルトでCLI設定時に作成されるので `1-9` を利用しないようにした。
+それから、`11-512` まで利用可能。
+
+階ごとに、WLANを作成することもあるため階ごとに10の位を分けるのがオススメ。
+また、mgmtは最初に作成使用するため、 `x1` で作成するのがオススメ。
+
+
+
+| Floor | WLAN ID | Profile Name | WLAN SSID   |
+|:------|:--------|:-------------|:------------|
+| 2F    | 11      | conbu-staff  | conbu-staff |
+|       | 12      | user-wifi    | user-wifi   |
+|||
+| 5F    | 21      | conbu-staff  | conbu-staff |
+|       | 22      | user-wifi    | user-wifi   |
+
+
 ### プロファイルとSSIDの設定
 
 
 プロファイルを変更し、対象イベント用に設定する。
-- WebGUI上部メニューからWLANs > 左メニューから「WLANs 」を選択。
-  - SSIDを変更することが可能になったので、プロファイル新規作成をするときに、プロファイルを次回イベント時に使いまわせるようにプロファイル名は統一したい。
-  - ユーザ用は「CONBU-wifi-User」とか。
+- WebGUI上部メニューからWLANs > 左メニューから「WLANs」を選択。
+
 
 作成したプロファイルはSSIDに紐づける必要がある。 WebGUI上部メニューから「WLANs」を選択し、SSIDを作成もしくは編集する。
 
