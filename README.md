@@ -366,9 +366,40 @@ SSID、PSK等を設定する。PSK設定は対象プロファイルのSecurity�
 - 「Clinent Band Select」の項目は2.4GHz/5GHz両方からSSIDを提供するときに、5GHz(802.11a)に優先して接続する設定なので、SSIDの設定状況に応じて選択する。
   - 2.4GHzと5GHzとでSSIDを分けた場合は不要、それ以外の場合は基本的に有効にしておくこと
 
-## <a name="rfprofile"> RF profile設定によるクライアント接続帯域の設定 </a>
+## <a name="rfprofile"> RF Profile 設定によるクライアント接続帯域の設定 </a>
+
+### 設計思想
 
 低帯域のbitrateでクライアントが接続すると、そのクライアントがボトルネックとなり、Wifi全体が遅くなるため、低bitrateのクライアント接続を絞る。
+設定のステータスには3種類あり、それぞれの説明は以下になる。
+
+
+Clientが接続するさいに接続される bitrate の下限値が `Mandatory` でありサポートしていれば、 `Supported` までの bitrate で接続する。
+
+
+|||
+|:-|:-|
+| `Disabled`  | 通信に使用するデータレートは、クライアントが指定します。|
+| `Mandatory` | クライアントは、このコントローラ上のアクセスポイントにアソシエートするにはこのデータレートをサポートしている必要があります。|
+| `Supported`  | アソシエートしたクライアントは、このデータレートをサポートしていれば、このレートを使用してアクセス ポイントと通信することができます。 ただし、クライアントがこのレートを使用できなくても、アソシエートは可能です。|
+
+
+最近のCONBUでは下記の設定をしている
+
+* RF-Low:
+    * `disable`: 1, 2, 5.5, 6, 9, 11, 12, 18
+    * `mandatory`: 24, 36
+    * `supported`: 48, 54
+
+* RF-High:
+    * `disable`: 1, 2, 5.5, 6, 9, 11, 12, 18, 24
+    * `mandatory`: 36,
+    * `supported`: 48, 54
+
+参考: [Cisco Aironet 3600 シリーズ アクセス ポイント - Cisco](https://www.cisco.com/c/ja_jp/products/collateral/wireless/aironet-3600-series/data_sheet_c78-686782.html)
+
+### クライアント接続帯域の設定
+
 上部メニュー「WIRELESS」から左メニューで「RF Profile」画面を開き、右上の「New」を選択しProfileを作成する。
 
 ![](images/rfprofile01.png)
