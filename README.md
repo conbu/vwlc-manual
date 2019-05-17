@@ -543,6 +543,19 @@ capwap ap controller ip address 10.255.255.51
 このコマンドは write の必要はありません。
 このAPから controller への疎通があれば JOIN しようとするはずです。
 
+### 静的アドレスを指定する場合は..
+
+上記の DHCP で設定せずに、静的アドレスで指定する場合は
+
+```
+capwap ap hostname ${AP_hostname}
+capwap ap controller ip address ${vWLC_address}
+capwap ap ip address ${AP_address} ${AP_netmask}
+capwap ap ip default-gateway ${GATEWAY_address}
+```
+
+上記をenableモードで入力することでネットワークの疎通がされたタイミングでvWLCにJOINします
+
 
 ## <a name="wlc_ap_conf"> APのWLC上の設定 </a>
 
