@@ -14,9 +14,10 @@
 - [IPv6のサポート/非サポート](#ipv6)
 - [CleanAir の有効化](#cleanair)
 - [NTP設定](#ntp)
-- [APの証明書クリア手順](#ap_cert_clear)
+- [APの初期化](#ap_reset)
+  - [APの証明書クリア手順](#ap_cert_clear)
+  - [APのJOIN](#ap_join)
 - [APのWLC上の設定](#wlc_ap_conf)
-- [APのJOIN](#ap_join)
 - [AP-Groupとの紐付け処理](#ap_join)
 - [トラブルシュート虎の巻](#ts_crib)
   - [VLANが混ざる その1](#flexconnect_vlan_mix_1)
@@ -470,7 +471,10 @@ WLCのバージョンにより、`CleanAir Admin Status` が有効でない場�
 
 ![](images/image11.png)
 
-## <a name="ap_cert_clear"> APの証明書クリア手順 </a>
+
+## <a name="ap_reset"> APの初期化 </a>
+
+### <a name="ap_cert_clear"> APの証明書クリア手順 </a>
 
 APへ以下の設定を行います。 AP内に登録されている旧証明書をクリアして新証明書をAPに導入させる必要があります。DHCPの場合はこの手順だけでもOK。
 
@@ -517,16 +521,31 @@ reload
 再起動後に `capwap ap controller ip address` をやり直します。
 
 
-## <a name="ap_join"> APのJOIN </a>
+### <a name="ap_join"> APのJOIN </a>
 
 AP の Join 方法は二通りあります
 
-* DHCP による IPアドレス 取得と Join
 * APに静的アドレスを指定する方法
+* DHCP による IPアドレス 取得と Join
 
-CONBU では、 `DHCP による IPアドレス 取得と Join` を推奨します。
+#### 静的アドレスを指定する場合
 
-DHCP による IPアドレス 取得と Join の方法を記載します。
+DHCPサーバが準備中の場合など、静的アドレスによる指定を行う場合はenableモードで以下を入力します。
+
+```
+capwap ap hostname ${AP_hostname}
+capwap ap controller ip address ${vWLC_address}
+capwap ap ip address ${AP_address} ${AP_netmask}
+capwap ap ip default-gateway ${GATEWAY_address}
+```
+
+このコマンドは write の必要はありません。
+このAPから controller への疎通が取れるまで JOIN を試行し続けます。
+
+#### DHCPを利用する場合
+
+DHCPサーバが既にデプロイされている場合はIPアドレスおよびゲートウェイアドレスの入力は不要です。
+APにてこれらをDHCPで取得してくれるため、コントローラのアドレスのみを指定します。
 
 ```
 capwap ap hostname <AP Name>
@@ -540,21 +559,7 @@ capwap ap controller ip address 10.255.255.51
 - デフォルトゲートウェイのアドレス: 10.255.1.1
 - vWLCのアドレス: 10.255.255.51
 
-このコマンドは write の必要はありません。
-このAPから controller への疎通があれば JOIN しようとするはずです。
-
-### 静的アドレスを指定する場合は..
-
-上記の DHCP で設定せずに、静的アドレスで指定する場合は
-
-```
-capwap ap hostname ${AP_hostname}
-capwap ap controller ip address ${vWLC_address}
-capwap ap ip address ${AP_address} ${AP_netmask}
-capwap ap ip default-gateway ${GATEWAY_address}
-```
-
-上記をenableモードで入力することでネットワークの疎通がされたタイミングでvWLCにJOINします
+静的アドレス利用時同様にwriteの必要はありません。
 
 
 ## <a name="wlc_ap_conf"> APのWLC上の設定 </a>
