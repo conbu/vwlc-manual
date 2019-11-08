@@ -513,12 +513,23 @@ reload
 
 ```
 
-再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかる。
-ここに改めて下記の様にvWLCのアドレスを設定します。
-また、APからログを収集する場合は、ここで `HOSTNAME` を指定することをオススメします。<br>
+再起動後、`show capwap ip config` を実行すると、WLCの接続先設定が初期化されているのがわかります。
+APからログを収集する場合は、このタイミングで `HOSTNAME` を指定することをオススメします。<br>
 (通常だと、`AP:aaaa.bbbb.cccc` の `AP` + MACアドレス になります。)
 
-再起動後に `capwap ap controller ip address` をやり直します。
+接続先WLCのアドレスを設定します。これにより、WLCへ接続しに行き、対応するOSのdownloadと適用処理が開始します。
+`capwap ap controller ip address`
+
+
+#### APのOSが8.3以降の場合
+CAPWAPの設定コマンドが一部変更されています。
+接続先WLCの指定コマンドである`capwap ap controller ip address`は、以下のコマンドで実施してください。
+
+```
+capwap ap primary-base <host名> <IP address>
+例:
+capwap ap primary-base WLC01 10.255.255.51
+```
 
 
 ### <a name="ap_join"> APのJOIN </a>
@@ -534,7 +545,7 @@ DHCPサーバが準備中の場合など、静的アドレスによる指定を�
 
 ```
 capwap ap hostname ${AP_hostname}
-capwap ap controller ip address ${vWLC_address}
+capwap ap controller ip address ${WLC_address}
 capwap ap ip address ${AP_address} ${AP_netmask}
 capwap ap ip default-gateway ${GATEWAY_address}
 ```
@@ -553,11 +564,13 @@ capwap ap controller ip address 10.255.255.51
 
 ```
 
+
+
 それぞれこの設定におけるマネジメントネットワークの想定は以下の通りです。
 
 - ネットワーク: 10.255.1.0/24
 - デフォルトゲートウェイのアドレス: 10.255.1.1
-- vWLCのアドレス: 10.255.255.51
+- WLCのアドレス: 10.255.255.51
 
 静的アドレス利用時同様にwriteの必要はありません。
 
@@ -664,7 +677,7 @@ MANAGEMENT -> Management Via Wireless
 
 ### <a name="client_load_balancing"> WLCとAPとの接続に不具合が見受けられる場合 </a>
 
-1. APはDHCPのアドレスを取れており、かつ、APからWLCへのpingは飛ぶのに、joinが出来ない場合
+#### 1. APはDHCPのアドレスを取れており、かつ、APからWLCへのpingは飛ぶのに、joinが出来ない場合
 
 結論としてはdefault gateway設定の見直しとdefault gatewayに指定されているVPCルータのstatic route設定が必要。
 
@@ -684,3 +697,28 @@ pingが届かない場合、APへのrouteが無いことがわかる。
 この場合、おそらく現在のバージョンのWLCの仕様と思われるが、同一インターフェイス上で2つのmgmtネットワークについて通信させる場合に、static routeを設定するために必要とされている"service port"というものの追加設定ができない。
 回避する方法として、VPCルータを1hop挟むことになるが、VPCルータ上に2つの会場向けのstatic routeを記述し、WLCのdefault gatewayはVPCルータに向けることで事象が解決した。
 
+#### 2. APを初期化したいが、WLCに繋がると、以下のようなメッセージが出力され処理が進まない場合がある。
+
+##### OS16.xの場合のメッセージ
+```
+[*11/07/2019 20:50:04.0001] CAPWAP State: DTLS Setup
+[*11/07/2019 20:50:04.7120] display_verify_cert_status: Verify Cert: FAILED at 0 depth: certificate has expired
+[*11/07/2019 20:50:04.7145] dtls_verify_con_cert: Controller certificate verification error
+[*11/07/2019 20:50:04.7145] dtls_process_packet: Controller certificate verification failed
+[*11/07/2019 20:50:04.7149] sendPacketToDtls: DTLS: Closing connection 0x54d54e00.
+[*11/07/2019 20:50:04.7151] Restarting CAPWAP State Machine.
+[*11/07/2019 20:50:04.7152]
+[*11/07/2019 20:50:04.7153] CAPWAP State: DTLS Teardown
+[*11/07/2019 20:50:04.7330] Aborting image download(0x0): Dtls cleanup,
+[*11/07/2019 20:50:04.8561] do ABORT, part2 is active part
+[*11/07/2019 20:50:04.8818] upgrade.sh: Cleanup tmp files ...
+```
+
+##### OS8.2.xの場合のメッセージ
+```
+Nov  7 22:21:01.009: %PKI-3-CERTIFICATE_INVALID_EXPIRED: Certificate chain validation has failed.  The certificate (SN: 5B8054D800000008B5E2) has expired.    Validity period ended on 04:31:05 UTC Sep 27 2019Peer certificate verification failed 001A
+```
+
+この場合、WLCのdevice certificateの有効期限が切れてしまっているようです。
+一時的な対処方法はWLC内の時刻を有効期間内に変える。(ただしNTPなどで時間が修正されると元の木阿弥。かつSNMP等で取得したデータの日時も当然ながら正確ではなくなる。)
+それ以外の根本的な解決法については調査中。
